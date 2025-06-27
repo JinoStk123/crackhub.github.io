@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrackHub - Crack Minecraft Cheater</title>
+    <!-- Tailwind CSS CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <!-- Google Fonts: Inter cho font chữ hiện đại -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome cho icons (ví dụ icon Discord, search, download) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* CSS tùy chỉnh để định hình phong cách Modrinth-like: Tối, Hiện đại, Tối giản */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212; /* Nền cực tối, hơi xanh đen */
+            color: #e0e0e0; /* Chữ sáng dịu */
+            line-height: 1.6;
+            overflow-x: hidden; /* Ngăn cuộn ngang */
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header */
+        header {
+            background-color: rgba(18, 18, 18, 0.8); /* Nền header hơi trong suốt */
+            backdrop-filter: blur(8px); /* Hiệu ứng blur */
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between; /* Giữ space-between để logo vẫn ở một bên */
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #00C2FF; /* Màu xanh biển chính */
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            transition: color 0.3s ease;
+        }
+        .logo:hover {
+            color: #0099CC; /* Màu xanh biển đậm hơn khi hover */
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #1f1f1f 0%, #0a0a0a 100%); /* Gradient tối */
+            min-height: 40vh; /* Giảm chiều cao, tập trung vào nội dung chính */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .hero-section::before { /* Hiệu ứng lưới/hạt mờ */
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(#333 1px, transparent 1px);
+            background-size: 25px 25px;
+            opacity: 0.05;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            animation: fadeInScale 1.2s ease-out forwards;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+            line-height: 1.1;
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            color: #bbb;
+            margin-bottom: 2rem;
+            max-width: 700px;
+            text-align: center; /* Đã thêm để căn giữa đoạn văn bản này */
+        }
+
+        /* Các nút chính (Tải ngay) */
+        .btn-primary {
+            background-color: #00C2FF; /* Màu xanh biển chính */
+            color: white;
+            padding: 1.2rem 3rem;
+            border-radius: 9999px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 194, 255, 0.4);
+        }
+
+        .btn-primary:hover {
+            background-color: #0099CC; /* Màu xanh biển đậm hơn khi hover */
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 194, 255, 0.6);
+        }
+
+        /* Client Grid Section (đã đổi tên từ search-filter-section) */
+        .client-grid-section {
+            background-color: #121212;
+            padding: 5rem 1.5rem; /* Padding lớn hơn để bù cho phần search bị xóa */
+        }
+
+        .client-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); /* Các cột tự động, rộng tối thiểu 280px */
+            gap: 2.5rem; /* Khoảng cách giữa các card */
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .client-card {
+            position: relative; /* Cần để pseudo-element ::before hoạt động */
+            width: 100%; /* Đảm bảo chiều rộng */
+            padding: 0; /* Đặt padding về 0 để ::before bao phủ đúng */
+            border-radius: 1rem;
+            overflow: hidden; /* Quan trọng để glow không bị tràn ra ngoài */
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+            border: 1px solid #2a2a2a;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            background-color: #1a1a1a; /* Nền cho card */
+        }
+        /* Hiệu ứng glow vùng con trỏ cho client card */
+        .client-card::before {
+            content: "";
+            position: absolute;
+            top: var(--y, 0);
+            left: var(--x, 0);
+            width: 300px; /* Kích thước vùng glow LỚN HƠN */
+            height: 300px; /* Kích thước vùng glow LỚN HƠN */
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(0, 194, 255, 0.2), transparent 70%); /* Màu glow xanh biển */
+            pointer-events: none;
+            transition: opacity 0.3s ease, top 0.05s ease-out, left 0.05s ease-out; /* Chuyển động nhanh và mượt hơn */
+            opacity: 0; /* Ẩn ban đầu */
+            z-index: 0; /* Đảm bảo ở dưới nội dung */
+        }
+
+        .client-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6); /* Đã bỏ glow tĩnh */
+            border-color: #00C2FF; /* Màu xanh biển chính */
+        }
+        .client-card:hover::before {
+            opacity: 1; /* Hiện glow khi hover */
+        }
+
+
+        .client-card-image {
+            width: 100%;
+            height: 200px; /* Chiều cao cố định cho ảnh */
+            object-fit: cover;
+            position: relative; /* Cần để z-index hoạt động */
+            z-index: 1; /* Đảm bảo ảnh nằm trên glow */
+        }
+
+        .client-card-content {
+            padding: 1.5rem;
+            flex-grow: 1; /* Cho phép nội dung co giãn */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative; /* Cần để z-index hoạt động */
+            z-index: 1; /* Đảm bảo nội dung nằm trên glow */
+            border-top: 1px solid #2a2a2a; /* Thêm border-top ban đầu */
+            transition: border-top-color 0.3s ease; /* Hiệu ứng chuyển màu cho border-top */
+        }
+
+        .client-card:hover .client-card-content {
+            border-top-color: #00C2FF; /* Thay đổi màu border-top khi hover */
+        }
+
+        .client-card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .client-card-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95rem;
+            color: #aaa;
+            margin-bottom: 1rem;
+        }
+
+        .client-card-info span i {
+            margin-right: 0.5rem;
+            color: #00C2FF; /* Màu xanh biển chính */
+        }
+
+        .client-card-description {
+            font-size: 1rem;
+            color: #c0c0c0;
+            margin-bottom: 1.5rem;
+            flex-grow: 1; /* Cho phép mô tả co giãn */
+        }
+
+        .client-card-download-btn {
+            background-color: #00C2FF; /* Màu xanh biển chính */
+            color: white;
+            padding: 0.8rem 1.2rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .client-card-download-btn:hover {
+            background-color: #0099CC; /* Màu xanh biển đậm hơn khi hover */
+            transform: translateY(-2px);
+        }
+
+        /* Client Detail Modal - Frosted Glass UI + Hover Glow */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7); /* Nền overlay hơi trong suốt */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            position: relative; /* Cần để pseudo-element ::before hoạt động */
+            background-color: rgba(26, 26, 26, 0.85); /* Nền modal mờ và trong suốt */
+            backdrop-filter: blur(15px); /* Hiệu ứng kính mờ (frosted glass) */
+            -webkit-backdrop-filter: blur(15px); /* Hỗ trợ Safari */
+            border-radius: 1rem;
+            max-width: 900px;
+            width: 90%;
+            max-height: 90vh; /* Giới hạn chiều cao */
+            overflow-y: auto; /* Cho phép cuộn nếu nội dung dài */
+            padding: 2.5rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Viền nhẹ để làm nổi bật hiệu ứng kính */
+            overflow: hidden; /* Quan trọng để glow không bị tràn ra ngoài */
+        }
+        /* Hiệu ứng glow vùng con trỏ cho modal content */
+        .modal-content::before {
+            content: "";
+            position: absolute;
+            top: var(--modal-y, 0);
+            left: var(--modal-x, 0);
+            width: 450px; /* Kích thước vùng glow LỚN HƠN cho modal */
+            height: 450px; /* Kích thước vùng glow LỚN HƠN cho modal */
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(0, 194, 255, 0.2), transparent 70%);
+            pointer-events: none;
+            transition: opacity 0.3s ease, top 0.05s ease-out, left 0.05s ease-out;
+            opacity: 0; /* Ẩn ban đầu */
+            z-index: 0; /* Đảm bảo ở dưới nội dung */
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+        /* Hiện glow khi hover vào modal */
+        .modal-content:hover::before {
+            opacity: 1;
+        }
+
+
+        .modal-close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            z-index: 1; /* Đảm bảo nút close nằm trên glow */
+        }
+        .modal-close-btn:hover {
+            color: white;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #2a2a2a;
+            padding-bottom: 1.5rem;
+            position: relative; /* Cần để z-index hoạt động */
+            z-index: 1; /* Đảm bảo nội dung header nằm trên glow */
+        }
+
+        .modal-image {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 0.75rem;
+            border: 1px solid #3a3a3a;
+        }
+
+        .modal-title-group h3 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-info {
+            font-size: 1.1rem;
+            color: #bbb;
+            display: flex;
+            gap: 1.5rem;
+        }
+        .modal-info span i {
+            margin-right: 0.5rem;
+            color: #00C2FF; /* Màu xanh biển chính */
+        }
+
+        .modal-description {
+            font-size: 1.1rem;
+            color: #c0c0c0;
+            margin-bottom: 2.5rem;
+            text-align: left;
+            position: relative; /* Cần để z-index hoạt động */
+            z-index: 1; /* Đảm bảo nội dung nằm trên glow */
+        }
+
+        .modal-download-btn {
+            background-color: #00C2FF; /* Màu xanh biển chính */
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 9999px;
+            font-size: 1.15rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            position: relative; /* Cần để z-index hoạt động */
+            z-index: 1; /* Đảm bảo nút nằm trên glow */
+        }
+
+        .modal-download-btn:hover {
+            background-color: #0099CC; /* Màu xanh biển đậm hơn khi hover */
+            transform: translateY(-3px);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0a0a0a;
+            padding: 3rem 0;
+            text-align: center;
+            color: #888;
+            font-size: 0.95rem;
+            border-top: 1px solid #1f1f1f;
+        }
+
+        /* Loading Indicator */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+
+        .loading-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .spinner {
+            border: 8px solid #333;
+            border-top: 8px solid #00C2FF; /* Màu spinner đồng bộ */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1024px) {
+            .hero-section h1 {
+                font-size: 2.8rem;
+            }
+            .hero-section p {
+                font-size: 1rem;
+            }
+            .client-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 2rem;
+            }
+            .modal-header {
+                flex-direction: column;
+                align-items: flex-start;
+                text-align: left;
+            }
+            .modal-image {
+                width: 150px;
+                height: 150px;
+            }
+            .modal-title-group h3 {
+                font-size: 2rem;
+            }
+            .modal-info {
+                flex-wrap: wrap;
+                gap: 1rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav ul {
+                display: none; /* Ẩn menu trên mobile, cần JS cho menu hamburger nếu muốn */
+            }
+            .logo {
+                font-size: 1.8rem;
+            }
+            .hero-section h1 {
+                font-size: 2.2rem;
+            }
+            .hero-section p {
+                font-size: 0.9rem;
+            }
+            .client-grid-section {
+                padding: 3rem 1rem; /* Điều chỉnh padding cho phù hợp */
+            }
+            .client-grid {
+                grid-template-columns: 1fr; /* Stack cột trên mobile */
+            }
+            .client-card {
+                margin-bottom: 1.5rem;
+            }
+            .modal-content {
+                width: 95%;
+                padding: 1.5rem;
+            }
+            .modal-close-btn {
+                top: 1rem;
+                right: 1rem;
+            }
+            .modal-title-group h3 {
+                font-size: 1.8rem;
+            }
+            .modal-info {
+                font-size: 0.9rem;
+            }
+            .modal-description {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="spinner"></div>
+    </div>
+
+    <!-- Header của website -->
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">CrackHub</div>
+                <!-- Đã xóa menu navigation -->
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Phần Hero - Giới thiệu chung -->
+        <section id="hero" class="hero-section">
+            <div class="hero-content">
+                <h1>Khám Phá Sức Mạnh Vô Hạn Của Minecraft</h1>
+                <p>Nơi tổng hợp các client modded chất lượng cao, giúp bạn nâng tầm trải nghiệm chơi game lên một tầm cao mới. Tải ngay!</p>
+                <a href="#browse-clients" class="btn-primary flex items-center justify-center gap-2">
+                    <i class="fas fa-arrow-down"></i> Bắt Đầu Khám Phá
+                </a>
+            </div>
+        </section>
+
+        <!-- Phần Hiển Thị Danh Sách Client -->
+        <section class="client-grid-section" id="browse-clients">
+            <div class="container">
+                <h2 class="text-4xl font-extrabold text-white mb-10">Thư Viện Client</h2>
+                <div id="clientGrid" class="client-grid">
+                    <!-- Các Client Card sẽ được render tại đây bằng JavaScript -->
+                </div>
+                <div id="noResults" class="text-center text-gray-500 text-lg mt-10 hidden">
+                    Không tìm thấy client nào phù hợp với yêu cầu của bạn.
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal Chi Tiết Client -->
+    <div id="clientDetailModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="closeModalBtn">&times;</button>
+            <div class="modal-header">
+                <img id="modalClientImage" src="https://placehold.co/200x200/333/fff?text=Client" alt="Client Image" class="modal-image">
+                <div class="modal-title-group">
+                    <h3 id="modalClientName">Tên Client</h3>
+                    <div class="modal-info">
+                        <span><i class="fas fa-gamepad"></i> Phiên bản: <span id="modalClientVersion">N/A</span></span>
+                        <span><i class="fas fa-download"></i> Lượt tải: <span id="modalClientDownloads">N/A</span></span>
+                        <span><i class="fas fa-tag"></i> Loại: <span id="modalClientType">N/A</span></span>
+                    </div>
+                </div>
+            </div>
+            <p id="modalClientDescription" class="modal-description">Mô tả chi tiết client.</p>
+            <a id="modalDownloadLink" href="#" target="_blank" class="modal-download-btn">
+                <i class="fas fa-cloud-download-alt"></i> Tải Xuống Ngay
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 CrackHub. Tất cả quyền được bảo lưu.</p>
+            <p>Sức mạnh trong từng cú click.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Dữ liệu Client mẫu (bạn có thể thêm nhiều hơn)
+        const clientsData = [
+            {
+                id: 'client-phantom',
+                name: 'Phantom Client',
+                image: 'https://placehold.co/400x200/00C2FF/fff?text=Phantom+Client', // Cập nhật màu ảnh
+                version: '1.20.x',
+                downloads: '1.2M',
+                type: 'Utility',
+                shortDescription: 'Client đa năng với các tính năng hữu ích, giúp bạn có lợi thế trong mọi tình huống.',
+                fullDescription: 'Phantom Client là một trong những client modded toàn diện nhất dành cho Minecraft. Nó cung cấp một bộ sưu tập khổng lồ các tính năng tiện ích, từ hỗ trợ PvP nâng cao đến các công cụ xây dựng và khám phá. Giao diện người dùng tùy biến, hiệu suất tối ưu và khả năng tương thích rộng rãi với nhiều phiên bản Minecraft làm cho Phantom trở thành lựa chọn hàng đầu cho game thủ chuyên nghiệp và người chơi giải trí. Tận hưởng trải nghiệm Minecraft mượt mà và mạnh mẽ hơn bao giờ hết với Phantom Client.',
+                downloadLink: 'https://github.com/YourGitHubUser/phantom-client/releases/download/v1.20.x/phantom-client.zip' // Ví dụ link GitHub
+            },
+            {
+                id: 'client-ghost',
+                name: 'Ghost Client Pro',
+                image: 'https://placehold.co/400x200/4CAF50/fff?text=Ghost+Client',
+                version: '1.8.9',
+                downloads: '850K',
+                type: 'Ghost',
+                shortDescription: 'Tối ưu cho PvP 1.8.9, giúp bạn ẩn danh và kiểm soát trận đấu một cách tinh vi.',
+                fullDescription: 'Ghost Client Pro là client hoàn hảo cho những ai muốn có lợi thế tinh vi trong các trận đấu PvP 1.8.9 mà vẫn giữ được vẻ "legit". Các tính năng được thiết kế để hoạt động ngầm, khó bị phát hiện bởi các hệ thống chống gian lận. Với các module như Aura tinh chỉnh, Aim Assist thông minh và các tùy chọn Anti-Bot, Ghost Client Pro sẽ giúp bạn trở thành một đối thủ đáng gờm mà không bị nghi ngờ. Client này cũng được cập nhật thường xuyên để đảm bảo khả năng bypass tối ưu.',
+                downloadLink: 'https://github.com/YourGitHubUser/ghost-client-pro/releases/download/v1.8.9/ghost-client-pro.zip' // Ví dụ link GitHub
+            },
+            {
+                id: 'client-impact',
+                name: 'Impact Modded',
+                image: 'https://placehold.co/400x200/FF5722/fff?text=Impact+Modded',
+                version: '1.19.x',
+                downloads: '2.1M',
+                type: 'Combat',
+                shortDescription: 'Bộ sưu tập modded client nổi tiếng với các tính năng Combat mạnh mẽ và giao diện dễ sử dụng.',
+                fullDescription: 'Impact là một trong những client modded lâu đời và phổ biến nhất, được biết đến với bộ tính năng PvP phong phú và khả năng tùy biến cao. Phiên bản Modded này đã được tối ưu hóa để hoạt động hiệu quả trên Minecraft 1.19.x, mang đến cho người chơi các module như KillAura, Criticals, ESP, và nhiều công cụ hỗ trợ chiến đấu khác. Impact Modded được cộng đồng tin dùng nhờ sự ổn định, cập nhật thường xuyên và khả năng thích nghi với các máy chủ khác nhau. Tải ngay để thống trị chiến trường!',
+                downloadLink: 'https://github.com/YourGitHubUser/impact-modded/releases/download/v1.19.x/impact-modded.zip' // Ví dụ link GitHub
+            },
+            {
+                id: 'client-flux',
+                name: 'Flux Client (Updated)',
+                image: 'https://placehold.co/400x200/00C2FF/fff?text=Flux+Client', // Cập nhật màu ảnh
+                version: '1.20.x',
+                downloads: '980K',
+                type: 'Combat',
+                shortDescription: 'Client hiện đại với khả năng bypass mạnh mẽ, được cập nhật liên tục cho phiên bản mới nhất.',
+                fullDescription: 'Flux Client là một client thế hệ mới, nổi bật với khả năng bypass tiên tiến và giao diện người dùng trực quan. Được cập nhật liên tục để tương thích với Minecraft 1.20.x và các hệ thống chống gian lận hiện đại, Flux cung cấp các tính năng mạnh mẽ như Speed, Fly, Phase, và nhiều hơn nữa. Client này tập trung vào việc mang lại trải nghiệm mượt mà và ổn định, giúp bạn dễ dàng vượt qua các chướng ngại vật trong game mà không bị phát hiện. Flux Client là lựa chọn lý tưởng cho những ai tìm kiếm sự cân bằng giữa sức mạnh và an toàn.',
+                downloadLink: 'https://github.com/YourGitHubUser/flux-client/releases/download/v1.20.x/flux-client.zip' // Ví dụ link GitHub
+            },
+            {
+                id: 'client-novoline',
+                name: 'Novoline Remastered',
+                image: 'https://placehold.co/400x200/E91E63/fff?text=Novoline',
+                version: '1.8.9',
+                downloads: '600K',
+                type: 'Combat',
+                shortDescription: 'Phiên bản cải tiến của Novoline, tối ưu cho PvP 1.8.9 với các tính năng cao cấp.',
+                fullDescription: 'Novoline Remastered mang lại sự trở lại mạnh mẽ của một trong những client PvP huyền thoại nhất. Được tái cấu trúc và tối ưu hóa cho Minecraft 1.8.9, phiên bản này cung cấp độ ổn định vượt trội và các module PvP được tinh chỉnh kỹ lưỡng. Novoline Remastered bao gồm các tính năng như Legit Aura, Velocity, và Clicker tự động, giúp bạn cải thiện kỹ năng PvP mà không cần quá nhiều nỗ lực. Với hiệu suất cao và khả năng bypass hiệu quả, Novoline Remastered là công cụ không thể thiếu cho các trận đấu đấu đỉnh cao.',
+                downloadLink: 'https://github.com/YourGitHubUser/novoline-remastered/releases/download/v1.8.9/novoline-remastered.zip' // Ví dụ link GitHub
+            },
+            {
+                id: 'client-celestial',
+                name: 'Celestial Fun Mod',
+                image: 'https://placehold.co/400x200/9C27B0/fff?text=Celestial',
+                version: '1.19.x',
+                downloads: '420K',
+                type: 'Fun',
+                shortDescription: 'Client giải trí với các mod thú vị, tập trung vào trải nghiệm chơi game vui vẻ, sáng tạo.',
+                fullDescription: 'Celestial Fun Mod là client dành cho những ai muốn thêm gia vị vào trải nghiệm Minecraft của mình. Thay vì tập trung vào các tính năng gian lận, Celestial cung cấp một loạt các mod độc đáo và vui nhộn, từ các công cụ xây dựng sáng tạo đến các mini-game tích hợp. Client này tương thích với Minecraft 1.19.x và được thiết kế để mang lại niềm vui và sự khám phá. Với Celestial Fun Mod, bạn có thể biến thế giới Minecraft của mình thành một sân chơi đầy bất ngờ và thú vị.',
+                downloadLink: 'https://github.com/YourGitHubUser/celestial-fun-mod/releases/download/v1.19.x/celestial-fun-mod.zip' // Ví dụ link GitHub
+            }
+        ];
+
+        let currentSearchQuery = ''; 
+
+        // DOM Elements
+        const clientGrid = document.getElementById('clientGrid');
+        const noResultsMessage = document.getElementById('noResults');
+
+        const clientDetailModal = document.getElementById('clientDetailModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalClientImage = document.getElementById('modalClientImage');
+        const modalClientName = document.getElementById('modalClientName');
+        const modalClientVersion = document.getElementById('modalClientVersion');
+        const modalClientDownloads = document.getElementById('modalClientDownloads');
+        const modalClientType = document.getElementById('modalClientType');
+        const modalClientDescription = document.getElementById('modalClientDescription');
+        const modalDownloadLink = document.getElementById('modalDownloadLink');
+
+        // Function to render clients to the grid
+        function renderClients(clientsToRender) {
+            clientGrid.innerHTML = ''; // Clear existing clients
+            if (clientsToRender.length === 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+                clientsToRender.forEach(client => {
+                    const clientCard = document.createElement('div');
+                    clientCard.className = 'client-card';
+                    clientCard.dataset.clientId = client.id; // Store ID for easy lookup
+                    clientCard.innerHTML = `
+                        <img src="${client.image}" alt="${client.name}" class="client-card-image">
+                        <div class="client-card-content">
+                            <div>
+                                <h3 class="client-card-title">${client.name}</h3>
+                                <div class="client-card-info">
+                                    <span><i class="fas fa-gamepad"></i> ${client.version}</span>
+                                    <span><i class="fas fa-download"></i> ${client.downloads}</span>
+                                </div>
+                                <p class="client-card-description">${client.shortDescription}</p>
+                            </div>
+                            <button class="client-card-download-btn">
+                                <i class="fas fa-arrow-down"></i> Chi tiết
+                            </button>
+                        </div>
+                    `;
+                    clientGrid.appendChild(clientCard);
+
+                    // Add event listener to the "Chi tiết" button or the card itself
+                    clientCard.querySelector('.client-card-download-btn').addEventListener('click', (e) => {
+                        e.stopPropagation(); // Prevent click event from bubbling up to the card
+                        showClientDetails(client.id);
+                    });
+                    // Add mousemove listener for glow effect
+                    clientCard.addEventListener("mousemove", e => {
+                        const rect = clientCard.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        clientCard.style.setProperty('--x', `${x}px`);
+                        clientCard.style.setProperty('--y', `${y}px`);
+                    });
+                });
+            }
+        }
+
+        // Function to show client details modal
+        function showClientDetails(clientId) {
+            const client = clientsData.find(c => c.id === clientId);
+            if (client) {
+                modalClientImage.src = client.image;
+                modalClientName.textContent = client.name;
+                modalClientVersion.textContent = client.version;
+                modalClientDownloads.textContent = client.downloads;
+                modalClientType.textContent = client.type;
+                modalClientDescription.textContent = client.fullDescription;
+                modalDownloadLink.href = client.downloadLink; // Set the download link
+                modalDownloadLink.setAttribute('download', ''); // Thêm thuộc tính download để trình duyệt tải trực tiếp
+                clientDetailModal.classList.add('active');
+            }
+        }
+
+        // Function to close client details modal
+        function closeClientDetails() {
+            clientDetailModal.classList.remove('active');
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            renderClients(clientsData); // Render all clients initially
+
+            closeModalBtn.addEventListener('click', closeClientDetails);
+            clientDetailModal.addEventListener('click', (e) => {
+                if (e.target === clientDetailModal) { // Close when clicking outside content
+                    closeClientDetails();
+                }
+            });
+
+            // Add mousemove listener for modal glow effect
+            const modalContent = document.getElementById('clientDetailModal').querySelector('.modal-content');
+            modalContent.addEventListener("mousemove", e => {
+                const rect = modalContent.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                modalContent.style.setProperty('--modal-x', `${x}px`);
+                modalContent.style.setProperty('--modal-y', `${y}px`);
+            });
+        });
+    </script>
+</body>
+</html>
