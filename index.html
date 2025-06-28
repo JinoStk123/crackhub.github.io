@@ -660,6 +660,7 @@
             if (!downloadCountSpan) return;
 
             let currentAnimatedNumber = 1; // Bắt đầu từ 1
+            const targetNumber = 5; // Số đích đến
 
             // Xóa animation cũ nếu có
             if (client.animationIntervalId) {
@@ -668,7 +669,13 @@
 
             client.animationIntervalId = setInterval(() => {
                 downloadCountSpan.textContent = currentAnimatedNumber;
-                currentAnimatedNumber = (currentAnimatedNumber === 9) ? 1 : currentAnimatedNumber + 1; // Loop 1-9, rồi quay lại 1
+                if (currentAnimatedNumber < targetNumber) {
+                    currentAnimatedNumber++;
+                } else {
+                    // Dừng animation khi đạt số đích
+                    clearInterval(client.animationIntervalId);
+                    client.animationIntervalId = null;
+                }
             }, 100); // Tốc độ animation (100ms)
         }
 
@@ -760,6 +767,7 @@
             if (client) {
                  const cardElement = document.querySelector(`.client-card[data-client-id="${client.id}"]`);
                  if (cardElement) {
+                     // Đảm bảo card cũng reset và chạy animation lại nếu cần
                      startDownloadCountAnimation(cardElement, client);
                  }
             }
