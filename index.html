@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CrackHub - Crack Minecraft Cheater</title>
-    <!-- Tailwind CSS CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
-    <!-- Google Fonts: Inter cho font chữ hiện đại -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome cho icons (ví dụ icon Discord, search, download) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* CSS tùy chỉnh để định hình phong cách Modrinth-like: Tối, Hiện đại, Tối giản */
@@ -541,23 +538,19 @@
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
 
-    <!-- Header của website -->
     <header>
         <div class="container">
             <nav>
                 <div class="logo">CrackHub</div>
-                <!-- Đã xóa menu navigation -->
-            </nav>
+                </nav>
         </div>
     </header>
 
     <main>
-        <!-- Phần Hero - Giới thiệu chung -->
         <section id="hero" class="hero-section">
             <div class="hero-content">
                 <h1>Khám Phá Sức Mạnh Vô Hạn Của Minecraft</h1>
@@ -568,13 +561,11 @@
             </div>
         </section>
 
-        <!-- Phần Hiển Thị Danh Sách Client -->
         <section class="client-grid-section" id="browse-clients">
             <div class="container">
                 <h2 class="text-4xl font-extrabold text-white mb-10">Thư Viện Client</h2>
                 <div id="clientGrid" class="client-grid">
-                    <!-- Các Client Card sẽ được render tại đây bằng JavaScript -->
-                </div>
+                    </div>
                 <div id="noResults" class="text-center text-gray-500 text-lg mt-10 hidden">
                     Không tìm thấy client nào phù hợp với yêu cầu của bạn.
                 </div>
@@ -582,7 +573,6 @@
         </section>
     </main>
 
-    <!-- Modal Chi Tiết Client -->
     <div id="clientDetailModal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close-btn" id="closeModalBtn">&times;</button>
@@ -592,7 +582,7 @@
                     <h3 id="modalClientName">Tên Client</h3>
                     <div class="modal-info">
                         <span><i class="fas fa-gamepad"></i> Phiên bản: <span id="modalClientVersion">N/A</span></span>
-                        <span><i class="fas fa-download"></i> Lượt tải: <span id="modalClientDownloads">N/A</span></span>
+                        <span><i class="fas fa-download"></i> Lượt tải: <span id="modalClientDownloads">0</span></span>
                         <span><i class="fas fa-tag"></i> Loại: <span id="modalClientType">N/A</span></span>
                     </div>
                 </div>
@@ -604,7 +594,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <p>&copy; 2025 CrackHub. Tất cả quyền được bảo lưu.</p>
@@ -614,19 +603,19 @@
 
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
-        // Dữ liệu Client mẫu (bạn có thể thêm nhiều hơn)
+        // Dữ liệu Client mẫu (đã thêm lại Augustus)
         const clientsData = [
             {
                 id: 'client-slinky',
                 name: 'Slinky Client',
-                image: 'https://placehold.co/400x200/FF8C00/fff?text=Slinky+Client',
+                image: 'https://placehold.co/400x200/FF8C00/fff?text=Slinky+Client', // Giữ nguyên placeholder hoặc thay bằng ảnh Slinky
                 version: '1.7.10 - 1.8.9',
                 downloads: 1234,
                 type: 'Blatant',
                 shortDescription: 'Cre: [Tên người tạo nếu có]',
                 fullDescription: 'Slinky consists of various modules, each offering a unique feature or advantage. Each module has its own page on this website, explaining its purpose and configuration. The modules are categorized in the same way as the in-game menu. Password: CrackHub',
                 downloadLink: 'https://mega.nz/file/ag4WBJrK#SPp0TGkSXPxN1xPIZGjgZo-zMbHIMdrE8B0A0RYkIRI',
-                animationIntervalId: null // Để lưu ID của setInterval cho animation
+                animationIntervalId: null // Để lưu ID của setInterval cho animation của card
             },
             {
                 id: 'client-augustus',
@@ -638,30 +627,6 @@
                 shortDescription: 'Cre: Nespola001',
                 fullDescription: 'Augustus Client là một standalone blatant PvP client cho Minecraft, chạy file riêng và tích hợp sẵn các module combat mạnh, hướng HVH và không giấu cheat. Password: CrackHub',
                 downloadLink: 'https://mega.nz/file/SkoniTYS#Hi-OsX3QJlwctKWt_yJt3aflMF6S3QkgMLoyWyJW9mc',
-                animationIntervalId: null
-            },
-            {
-                id: 'client-karma',
-                name: 'Karma Client',
-                image: 'https://placehold.co/400x200/FFD700/fff?text=Karma+Client',
-                version: '1.8.9',
-                downloads: 3210,
-                type: 'Legit',
-                shortDescription: 'Tối ưu hóa trải nghiệm PvP của bạn.',
-                fullDescription: 'Karma Client được thiết kế để mang lại lợi thế PvP công bằng với các tính năng tinh tế, không làm mất đi tính chân thực của game. Password: CrackHub',
-                downloadLink: 'https://example.com/karma-client',
-                animationIntervalId: null
-            },
-            {
-                id: 'client-impact',
-                name: 'Impact Client',
-                image: 'https://placehold.co/400x200/8A2BE2/fff?text=Impact+Client',
-                version: '1.12.2',
-                downloads: 9876,
-                type: 'Utility',
-                shortDescription: 'Client đa năng cho mọi nhu cầu.',
-                fullDescription: 'Impact Client là một client đa năng với hàng loạt module hữu ích, từ các tính năng hỗ trợ sinh tồn đến PvP. Password: CrackHub',
-                downloadLink: 'https://example.com/impact-client',
                 animationIntervalId: null
             }
         ];
@@ -683,12 +648,18 @@
 
 
         // Function để bắt đầu animation số đếm
-        function startDownloadCountAnimation(client) {
-            const cardElement = document.querySelector(`.client-card[data-client-id="${client.id}"]`);
-            if (!cardElement) return; // Đảm bảo card tồn tại
+        // Hàm này sẽ được dùng cho cả card và modal
+        function startDownloadCountAnimation(element, client) {
+            let downloadCountSpan;
+            if (element.classList.contains('client-card')) {
+                downloadCountSpan = element.querySelector('.download-count');
+            } else if (element.id === 'clientDetailModal') {
+                downloadCountSpan = element.querySelector('#modalClientDownloads');
+            }
 
-            const downloadCountSpan = cardElement.querySelector('.download-count');
-            let currentAnimatedNumber = 0; // Bắt đầu từ 0
+            if (!downloadCountSpan) return;
+
+            let currentAnimatedNumber = 1; // Bắt đầu từ 1
 
             // Xóa animation cũ nếu có
             if (client.animationIntervalId) {
@@ -697,26 +668,9 @@
 
             client.animationIntervalId = setInterval(() => {
                 downloadCountSpan.textContent = currentAnimatedNumber;
-                currentAnimatedNumber = (currentAnimatedNumber === 9) ? 1 : currentAnimatedNumber + 1; // Loop 0-9, rồi quay lại 1
+                currentAnimatedNumber = (currentAnimatedNumber === 9) ? 1 : currentAnimatedNumber + 1; // Loop 1-9, rồi quay lại 1
             }, 100); // Tốc độ animation (100ms)
         }
-
-        // Function để dừng animation số đếm và hiển thị số thực
-        function stopDownloadCountAnimation(client) {
-            if (client.animationIntervalId) {
-                clearInterval(client.animationIntervalId);
-                client.animationIntervalId = null;
-            }
-            const cardElement = document.querySelector(`.client-card[data-client-id="${client.id}"]`);
-            if (cardElement) {
-                cardElement.querySelector('.download-count').textContent = client.downloads.toLocaleString();
-            }
-            // Cập nhật số trên modal nếu nó đang mở
-            if (clientDetailModal.classList.contains('active') && modalDownloadLink.dataset.clientId === client.id) {
-                 modalClientDownloads.textContent = client.downloads.toLocaleString();
-            }
-        }
-
 
         // Function to render clients to the grid
         function renderClients(clientsToRender) {
@@ -736,8 +690,7 @@
                                 <h3 class="client-card-title">${client.name}</h3>
                                 <div class="client-card-info">
                                     <span><i class="fas fa-gamepad"></i> ${client.version}</span>
-                                    <span><i class="fas fa-download"></i> <span class="download-count">0</span></span> <!-- Bắt đầu từ 0 cho animation -->
-                                </div>
+                                    <span><i class="fas fa-download"></i> <span class="download-count">1</span></span> </div>
                                 <p class="client-card-description">${client.shortDescription}</p>
                             </div>
                             <button class="client-card-download-btn">
@@ -748,7 +701,7 @@
                     clientGrid.appendChild(clientCard);
 
                     // Bắt đầu animation cho số lượt tải của card này
-                    startDownloadCountAnimation(client);
+                    startDownloadCountAnimation(clientCard, client);
 
                     // Add event listener to the "Chi tiết" button or the card itself
                     clientCard.querySelector('.client-card-download-btn').addEventListener('click', (e) => {
@@ -773,19 +726,20 @@
         function showClientDetails(clientId) {
             const client = clientsData.find(c => c.id === clientId);
             if (client) {
-                // Dừng animation và hiển thị số thực khi mở modal
-                stopDownloadCountAnimation(client);
-
                 modalClientImage.src = client.image;
                 modalClientName.textContent = client.name;
                 modalClientVersion.textContent = client.version;
-                modalClientDownloads.textContent = client.downloads.toLocaleString(); // Hiển thị số thực
+                // Vẫn hiển thị animation cho lượt tải trong modal
+                modalClientDownloads.textContent = '1'; // Đặt lại 1 để animation bắt đầu lại trong modal
                 modalClientType.textContent = client.type;
                 modalClientDescription.textContent = client.fullDescription;
                 modalDownloadLink.href = client.downloadLink; // Set the download link
                 modalDownloadLink.setAttribute('download', ''); // Thêm thuộc tính download để trình duyệt tải trực tiếp
                 modalDownloadLink.dataset.clientId = clientId; // Lưu client ID vào nút tải xuống của modal
                 clientDetailModal.classList.add('active');
+
+                // Bắt đầu animation cho số lượt tải trong modal
+                startDownloadCountAnimation(clientDetailModal, client);
             }
         }
 
@@ -795,13 +749,19 @@
             // Lấy client ID từ nút tải xuống của modal để biết client nào vừa được xem
             const clientId = modalDownloadLink.dataset.clientId;
             const client = clientsData.find(c => c.id === clientId);
+
+            // Dừng animation cho modal khi đóng
+            if (client && client.animationIntervalId) {
+                clearInterval(client.animationIntervalId);
+                client.animationIntervalId = null; // Đặt về null để biết không có animation nào đang chạy
+            }
+
+            // Đặt lại animation cho card khi modal đóng (nếu card đó vẫn còn)
             if (client) {
-                // Nếu animation đã dừng (do mở modal hoặc đã tải), không khởi động lại nếu nó đã là số thực
-                // Chỉ khởi động lại animation nếu nó chưa bị dừng vĩnh viễn (do tải xuống)
-                const cardElement = document.querySelector(`.client-card[data-client-id="${client.id}"]`);
-                if (cardElement && !client.animationIntervalId && cardElement.querySelector('.download-count').textContent !== client.downloads.toLocaleString()) {
-                    startDownloadCountAnimation(client);
-                }
+                 const cardElement = document.querySelector(`.client-card[data-client-id="${client.id}"]`);
+                 if (cardElement) {
+                     startDownloadCountAnimation(cardElement, client);
+                 }
             }
         }
 
@@ -868,15 +828,12 @@
             });
         }
 
-        // --- Auto Increment Download Count ---
+        // --- Auto Increment Download Count (chỉ tăng số liệu, không hiển thị) ---
         function incrementDownloadCount(clientId) {
             const clientIndex = clientsData.findIndex(c => c.id === clientId);
             if (clientIndex !== -1) {
-                const client = clientsData[clientIndex];
-                client.downloads++; // Tăng lượt tải thực tế
-
-                // Dừng animation và hiển thị số thực sau khi tải
-                stopDownloadCountAnimation(client);
+                clientsData[clientIndex].downloads++; // Vẫn tăng số liệu thực tế ở backend/data
+                console.log(`Client ${clientId} downloads: ${clientsData[clientIndex].downloads}`); // Log ra để biết nó vẫn tăng
             }
         }
 
