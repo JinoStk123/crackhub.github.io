@@ -4,11 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CrackHub - Crack Minecraft Cheater</title>
-    <!-- Tailwind CSS CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
-    <!-- Google Fonts: Inter cho font chữ hiện đại -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome cho icons (ví dụ icon Discord, search, download) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         /* CSS tùy chỉnh để định hình phong cách Modrinth-like: Tối, Hiện đại, Tối giản */
@@ -87,6 +84,9 @@
             position: relative;
             z-index: 1;
             animation: fadeInScale 1.2s ease-out forwards;
+            /* Parallax effect */
+            transform: translateY(var(--parallax-y, 0px));
+            transition: transform 0s linear; /* Smooth parallax */
         }
 
         @keyframes fadeInScale {
@@ -163,7 +163,17 @@
             display: flex;
             flex-direction: column;
             background-color: #1a1a1a; /* Nền cho card */
+            /* Scroll Reveal - ban đầu ẩn và dịch lên */
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
         }
+        /* Class khi element đã được reveal */
+        .client-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* Hiệu ứng glow vùng con trỏ cho client card */
         .client-card::before {
             content: "";
@@ -188,7 +198,6 @@
         .client-card:hover::before {
             opacity: 1; /* Hiện glow khi hover */
         }
-
 
         .client-card-image {
             width: 100%;
@@ -529,23 +538,19 @@
     </style>
 </head>
 <body>
-    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
 
-    <!-- Header của website -->
     <header>
         <div class="container">
             <nav>
                 <div class="logo">CrackHub</div>
-                <!-- Đã xóa menu navigation -->
-            </nav>
+                </nav>
         </div>
     </header>
 
     <main>
-        <!-- Phần Hero - Giới thiệu chung -->
         <section id="hero" class="hero-section">
             <div class="hero-content">
                 <h1>Khám Phá Sức Mạnh Vô Hạn Của Minecraft</h1>
@@ -556,13 +561,11 @@
             </div>
         </section>
 
-        <!-- Phần Hiển Thị Danh Sách Client -->
         <section class="client-grid-section" id="browse-clients">
             <div class="container">
                 <h2 class="text-4xl font-extrabold text-white mb-10">Thư Viện Client</h2>
                 <div id="clientGrid" class="client-grid">
-                    <!-- Các Client Card sẽ được render tại đây bằng JavaScript -->
-                </div>
+                    </div>
                 <div id="noResults" class="text-center text-gray-500 text-lg mt-10 hidden">
                     Không tìm thấy client nào phù hợp với yêu cầu của bạn.
                 </div>
@@ -570,12 +573,11 @@
         </section>
     </main>
 
-    <!-- Modal Chi Tiết Client -->
     <div id="clientDetailModal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close-btn" id="closeModalBtn">&times;</button>
             <div class="modal-header">
-                <img id="modalClientImage" src="https://placehold.co/200x200/333/fff?text=Client" alt="Client Image" class="modal-image">
+                <img id="modalClientImage" src="https://placehold.co/200x200/333/fff?text=Client" alt="Client Image" class="modal-image" loading="lazy">
                 <div class="modal-title-group">
                     <h3 id="modalClientName">Tên Client</h3>
                     <div class="modal-info">
@@ -592,7 +594,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
     <footer>
         <div class="container">
             <p>&copy; 2025 CrackHub. Tất cả quyền được bảo lưu.</p>
@@ -600,17 +601,18 @@
         </div>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script>
         // Dữ liệu Client mẫu (bạn có thể thêm nhiều hơn)
         const clientsData = [
-           {
+            {
                 id: 'client-slinky',
                 name: 'Slinky Client',
                 image: 'https://placehold.co/400x200/FF8C00/fff?text=Slinky+Client', // Đã đổi màu cam
                 version: '1.7.10 - 1.8.9',
-                downloads: '0',
-                type: 'blatant',
-                shortDescription: 'Cre:',
+                downloads: 1234, // Đổi thành số để dễ tăng
+                type: 'Blatant',
+                shortDescription: 'Cre: [Tên người tạo nếu có]',
                 fullDescription: 'Slinky consists of various modules, each offering a unique feature or advantage. Each module has its own page on this website, explaining its purpose and configuration. The modules are categorized in the same way as the in-game menu. Password: CrackHub',
                 downloadLink: 'https://mega.nz/file/ag4WBJrK#SPp0TGkSXPxN1xPIZGjgZo-zMbHIMdrE8B0A0RYkIRI' // Ví dụ link GitHub
             },
@@ -619,19 +621,17 @@
                 name: 'Augustus Client',
                 image: 'https://placehold.co/400x200/00C2FF/fff?text=Augustus+Client', // Cập nhật màu ảnh
                 version: '1.8.9',
-                downloads: '0',
-                type: 'Balatan',
+                downloads: 5678, // Đổi thành số để dễ tăng
+                type: 'Blatant',
                 shortDescription: 'Cre: Nespola001',
                 fullDescription: 'Augustus Client là một standalone blatant PvP client cho Minecraft, chạy file riêng và tích hợp sẵn các module combat mạnh, hướng HVH và không giấu cheat. Password: CrackHub',
                 downloadLink: 'https://mega.nz/file/SkoniTYS#Hi-OsX3QJlwctKWt_yJt3aflMF6S3QkgMLoyWyJW9mc' // Ví dụ link GitHub
             },
         ];
-        let currentSearchQuery = ''; 
 
         // DOM Elements
         const clientGrid = document.getElementById('clientGrid');
         const noResultsMessage = document.getElementById('noResults');
-
         const clientDetailModal = document.getElementById('clientDetailModal');
         const closeModalBtn = document.getElementById('closeModalBtn');
         const modalClientImage = document.getElementById('modalClientImage');
@@ -641,6 +641,9 @@
         const modalClientType = document.getElementById('modalClientType');
         const modalClientDescription = document.getElementById('modalClientDescription');
         const modalDownloadLink = document.getElementById('modalDownloadLink');
+        const heroSection = document.getElementById('hero');
+        const heroContent = document.querySelector('.hero-content');
+
 
         // Function to render clients to the grid
         function renderClients(clientsToRender) {
@@ -654,13 +657,13 @@
                     clientCard.className = 'client-card';
                     clientCard.dataset.clientId = client.id; // Store ID for easy lookup
                     clientCard.innerHTML = `
-                        <img src="${client.image}" alt="${client.name}" class="client-card-image">
+                        <img class="client-card-image" data-src="${client.image}" alt="${client.name}" loading="lazy">
                         <div class="client-card-content">
                             <div>
                                 <h3 class="client-card-title">${client.name}</h3>
                                 <div class="client-card-info">
                                     <span><i class="fas fa-gamepad"></i> ${client.version}</span>
-                                    <span><i class="fas fa-download"></i> ${client.downloads}</span>
+                                    <span><i class="fas fa-download"></i> <span class="download-count">${client.downloads.toLocaleString()}</span></span>
                                 </div>
                                 <p class="client-card-description">${client.shortDescription}</p>
                             </div>
@@ -685,6 +688,8 @@
                         clientCard.style.setProperty('--y', `${y}px`);
                     });
                 });
+                lazyLoadImages(); // Apply lazy load after rendering
+                observeClientCards(); // Apply scroll reveal after rendering
             }
         }
 
@@ -695,7 +700,7 @@
                 modalClientImage.src = client.image;
                 modalClientName.textContent = client.name;
                 modalClientVersion.textContent = client.version;
-                modalClientDownloads.textContent = client.downloads;
+                modalClientDownloads.textContent = client.downloads.toLocaleString();
                 modalClientType.textContent = client.type;
                 modalClientDescription.textContent = client.fullDescription;
                 modalDownloadLink.href = client.downloadLink; // Set the download link
@@ -707,6 +712,84 @@
         // Function to close client details modal
         function closeClientDetails() {
             clientDetailModal.classList.remove('active');
+        }
+
+        // --- Lazy Load Images ---
+        function lazyLoadImages() {
+            const lazyImages = document.querySelectorAll('img[data-src]');
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                });
+            }, { rootMargin: '0px 0px 100px 0px' }); // Load khi ảnh cách viewport 100px
+
+            lazyImages.forEach(img => {
+                observer.observe(img);
+            });
+        }
+
+        // --- Scroll Reveal ---
+        const observerOptions = {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.1 // 10% of the element must be visible
+        };
+
+        const clientCardObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        function observeClientCards() {
+            const clientCards = document.querySelectorAll('.client-card');
+            clientCards.forEach(card => {
+                clientCardObserver.observe(card);
+            });
+        }
+
+        // --- Hero Parallax Effect ---
+        function applyHeroParallax() {
+            const scrollPosition = window.scrollY;
+            const heroHeight = heroSection.offsetHeight;
+
+            // Tính toán mức độ dịch chuyển, tối đa là 50px
+            const parallaxAmount = Math.min(scrollPosition * 0.3, 50); // Điều chỉnh 0.3 để thay đổi tốc độ parallax
+
+            heroContent.style.setProperty('--parallax-y', `${parallaxAmount}px`);
+        }
+
+        // --- Confetti Effect on Download ---
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#00C2FF', '#FFD700', '#FFFFFF']
+            });
+        }
+
+        // --- Auto Increment Download Count ---
+        function incrementDownloadCount(clientId) {
+            const clientIndex = clientsData.findIndex(c => c.id === clientId);
+            if (clientIndex !== -1) {
+                clientsData[clientIndex].downloads++;
+                // Cập nhật số lượt tải hiển thị trên modal
+                modalClientDownloads.textContent = clientsData[clientIndex].downloads.toLocaleString();
+                // Cập nhật số lượt tải trên card chính nếu modal mở từ card
+                const cardElement = document.querySelector(`.client-card[data-client-id="${clientId}"]`);
+                if (cardElement) {
+                    cardElement.querySelector('.download-count').textContent = clientsData[clientIndex].downloads.toLocaleString();
+                }
+            }
         }
 
         // Event Listeners
@@ -729,6 +812,17 @@
                 modalContent.style.setProperty('--modal-x', `${x}px`);
                 modalContent.style.setProperty('--modal-y', `${y}px`);
             });
+
+            // Add event listener for download button in modal
+            modalDownloadLink.addEventListener('click', (e) => {
+                const clientId = modalClientDownloadLink.dataset.clientId; // Lấy ID của client từ data attribute
+                triggerConfetti();
+                incrementDownloadCount(clientId);
+            });
+
+            // Parallax on scroll
+            window.addEventListener('scroll', applyHeroParallax);
+            applyHeroParallax(); // Apply initially in case of refresh with scroll
         });
     </script>
 </body>
