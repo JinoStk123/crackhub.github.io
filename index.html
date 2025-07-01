@@ -782,4 +782,340 @@
                 name: 'Slinky Client',
                 image: 'https://placehold.co/400x200/FF8C00/fff?text=Slinky+Client',
                 version: '1.7.10 - 1.8.9',
-                downloads
+                downloads: 0, // Sẽ được cập nhật từ Firestore
+                type: 'Ghost',
+                shortDescription: 'Cre: mrnv & o',
+                fullDescription: 'Slinky consists of various modules, each offering a unique feature or advantage. Each module has its own page on this website, explaining its purpose and configuration. The modules are categorized in the same way as the in-game menu.',
+                filePassword: 'CrackHub', // Mật khẩu giải nén file riêng biệt
+                downloadLink: 'https://mega.nz/file/ag4WBJrK#SPp0TGkSXPxN1xPIZGjgZo-zMbHIMdrE8B0A0RYkIRI'
+            },
+            {
+                id: 'client-augustus',
+                name: 'Augustus Client',
+                image: 'https://placehold.co/400x200/00C2FF/fff?text=Augustus+Client',
+                version: '1.8.9',
+                downloads: 0, // Sẽ được cập nhật từ Firestore
+                type: 'Blatant',
+                shortDescription: 'Cre: Nespola001',
+                fullDescription: 'Augustus Client là một standalone blatant PvP client cho Minecraft, chạy file riêng và tích hợp sẵn các module combat mạnh, hướng HVH và không giấu cheat.',
+                filePassword: 'CrackHub', // Mật khẩu giải nén file riêng biệt
+                downloadLink: 'https://mega.nz/file/SkoniTYS#Hi-OsX3QJlwctKWt_yJt3aflMF6S3QkgMLoyWyJW9mc'
+            }
+        ];
+
+        // DOM Elements
+        const clientGrid = document.getElementById('clientGrid');
+        const noResultsMessage = document.getElementById('noResults');
+        const clientDetailModal = document.getElementById('clientDetailModal');
+        const closeModalBtn = document.getElementById('closeModalBtn');
+        const modalClientImage = document.getElementById('modalClientImage');
+        const modalClientName = document.getElementById('modalClientName');
+        const modalClientVersion = document.getElementById('modalClientVersion');
+        const modalClientDownloads = document.getElementById('modalClientDownloads');
+        const modalClientType = document.getElementById('modalClientType');
+        const modalClientDescription = document.getElementById('modalClientDescription');
+        const modalFilePassword = document.getElementById('modalFilePassword'); // New element
+        const filePasswordValue = document.getElementById('filePasswordValue'); // New element
+        const modalDownloadLink = document.getElementById('modalDownloadLink');
+        const heroSection = document.getElementById('hero');
+        const heroContent = document.querySelector('.hero-content');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // Password Elements
+        // Removed mainPasswordOverlay related elements
+
+        const downloadPasswordOverlay = document.getElementById('downloadPasswordOverlay');
+        const downloadPasswordInput = document.getElementById('downloadPasswordInput');
+        const downloadPasswordSubmit = document.getElementById('downloadPasswordSubmit');
+        const downloadPasswordError = document.getElementById('downloadPasswordError');
+
+        // Removed MAIN_PAGE_PASSWORD
+        const DOWNLOAD_PASSWORD = "CrackHub"; // Mật khẩu tải xuống client
+
+        // --- Firebase Download Count Logic ---
+        async function loadAllClientDownloadCounts() {
+            if (!db) {
+                console.error("Firestore not initialized for loading download counts.");
+                return;
+            }
+            showLoading();
+            try {
+                for (const client of clientsData) {
+                    const docRef = doc(db, `artifacts/${appId}/public/data/clientDownloads`, client.id);
+                    const docSnap = await getDoc(docRef);
+
+                    if (docSnap.exists()) {
+                        client.downloads = docSnap.data().count || 0;
+                    } else {
+                        // Initialize if not exists
+                        await setDoc(docRef, { count: 0 });
+                        client.downloads = 0;
+                    }
+                }
+                renderClients(clientsData); // Re-render clients with updated download counts
+            } catch (error) {
+                console.error("Error loading all client download counts:", error);
+                // Fallback to 0 or display error if Firestore fails
+                clientsData.forEach(client => client.downloads = "Lỗi");
+                renderClients(clientsData);
+            } finally {
+                hideLoading();
+            }
+        }
+
+        async function incrementClientDownloadCount(clientId) {
+            if (!db) {
+                console.error("Firestore not initialized for incrementing download count.");
+                return;
+            }
+            try {
+                const docRef = doc(db, `artifacts/${appId}/public/data/clientDownloads`, clientId);
+                const docSnap = await getDoc(docRef);
+                let currentCount = 0;
+
+                if (docSnap.exists()) {
+                    currentCount = docSnap.data().count || 0;
+                }
+
+                const newCount = currentCount + 1;
+                await setDoc(docRef, { count: newCount }, { merge: true }); // Use merge to only update count field
+                
+                // Update the client data in memory and re-render the specific card/modal
+                const clientIndex = clientsData.findIndex(c => c.id === clientId);
+                if (clientIndex !== -1) {
+                    clientsData[clientIndex].downloads = newCount;
+                    // Find and update the specific card's download count
+                    const cardElement = document.querySelector(`.client-card[data-client-id="${clientId}"] .download-count`);
+                    if (cardElement) {
+                        cardElement.textContent = newCount;
+                    }
+                    // Update modal download count if it's open for this client
+                    if (clientDetailModal.classList.contains('active') && modalClientName.textContent === clientsData[clientIndex].name) {
+                        modalClientDownloads.textContent = newCount;
+                    }
+                }
+                console.log(`Download count for ${clientId} incremented to: ${newCount}`);
+            } catch (error) {
+                console.error("Error incrementing download count for", clientId, ":", error);
+            }
+        }
+
+        // --- Loading Overlay Functions ---
+        function showLoading() {
+            loadingOverlay.classList.add('active');
+        }
+
+        function hideLoading() {
+            loadingOverlay.classList.remove('active');
+        }
+
+        // --- Password Logic ---
+        // Removed showMainPasswordOverlay and hideMainPasswordOverlay functions
+
+        function showDownloadPasswordOverlay(clientId, downloadLink) {
+            downloadPasswordOverlay.classList.add('active');
+            downloadPasswordInput.value = ''; // Clear input
+            downloadPasswordError.textContent = ''; // Clear error
+            // Store the client ID and link for later use when password is submitted
+            downloadPasswordSubmit.dataset.clientId = clientId;
+            downloadPasswordSubmit.dataset.downloadLink = downloadLink;
+        }
+
+        function hideDownloadPasswordOverlay() {
+            downloadPasswordOverlay.classList.remove('active');
+        }
+
+        // --- Render Clients ---
+        function renderClients(clientsToRender) {
+            clientGrid.innerHTML = '';
+            if (clientsToRender.length === 0) {
+                noResultsMessage.classList.remove('hidden');
+            } else {
+                noResultsMessage.classList.add('hidden');
+                clientsToRender.forEach(client => {
+                    const clientCard = document.createElement('div');
+                    clientCard.className = 'client-card';
+                    clientCard.dataset.clientId = client.id;
+                    clientCard.innerHTML = `
+                        <img class="client-card-image" data-src="${client.image}" alt="${client.name}" loading="lazy">
+                        <div class="client-card-content">
+                            <div>
+                                <h3 class="client-card-title">${client.name}</h3>
+                                <div class="client-card-info">
+                                    <span><i class="fas fa-gamepad"></i> ${client.version}</span>
+                                    <span><i class="fas fa-download"></i> <span class="download-count">${client.downloads}</span></span>
+                                </div>
+                                <p class="client-card-description">${client.shortDescription}</p>
+                            </div>
+                            <button class="client-card-download-btn">
+                                <i class="fas fa-arrow-down"></i> Chi tiết
+                            </button>
+                        </div>
+                    `;
+                    clientGrid.appendChild(clientCard);
+
+                    clientCard.querySelector('.client-card-download-btn').addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        showClientDetails(client.id);
+                    });
+                    clientCard.addEventListener("mousemove", e => {
+                        const rect = clientCard.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        clientCard.style.setProperty('--x', `${x}px`);
+                        clientCard.style.setProperty('--y', `${y}px`);
+                    });
+                });
+                lazyLoadImages();
+                observeClientCards();
+            }
+        }
+
+        // --- Show Client Details Modal ---
+        function showClientDetails(clientId) {
+            const client = clientsData.find(c => c.id === clientId);
+            if (client) {
+                modalClientImage.src = client.image;
+                modalClientName.textContent = client.name;
+                modalClientVersion.textContent = client.version;
+                modalClientDownloads.textContent = client.downloads; // Display actual count
+                modalClientType.textContent = client.type;
+                modalClientDescription.textContent = client.fullDescription;
+                
+                // Display file password from the new 'filePassword' property
+                if (client.filePassword) {
+                    filePasswordValue.textContent = client.filePassword;
+                    modalFilePassword.classList.remove('hidden');
+                } else {
+                    filePasswordValue.textContent = 'Không có';
+                    modalFilePassword.classList.add('hidden'); // Hide if no password found
+                }
+
+                // Store client ID and link on the download button itself
+                modalDownloadLink.dataset.clientId = client.id;
+                modalDownloadLink.dataset.actualDownloadLink = client.downloadLink;
+
+                clientDetailModal.classList.add('active');
+            }
+        }
+
+        // --- Close Client Details Modal ---
+        function closeClientDetails() {
+            clientDetailModal.classList.remove('active');
+            modalFilePassword.classList.add('hidden'); // Hide password when closing modal
+        }
+
+        // --- Lazy Load Images ---
+        function lazyLoadImages() {
+            const lazyImages = document.querySelectorAll('img[data-src]');
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const img = entry.target;
+                        img.src = img.dataset.src;
+                        img.removeAttribute('data-src');
+                        observer.unobserve(img);
+                    }
+                });
+            }, { rootMargin: '0px 0px 100px 0px' });
+
+            lazyImages.forEach(img => {
+                observer.observe(img);
+            });
+        }
+
+        // --- Scroll Reveal ---
+        const observerOptions = {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.1 // 10% of the element must be visible
+        };
+
+        const clientCardObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        function observeClientCards() {
+            const clientCards = document.querySelectorAll('.client-card');
+            clientCards.forEach(card => {
+                clientCardObserver.observe(card);
+            });
+        }
+
+        // --- Hero Parallax Effect ---
+        function applyHeroParallax() {
+            const scrollPosition = window.scrollY;
+            const heroHeight = heroSection.offsetHeight;
+            const parallaxAmount = Math.min(scrollPosition * 0.3, 50);
+            heroContent.style.setProperty('--parallax-y', `${parallaxAmount}px`);
+        }
+
+        // --- Confetti Effect on Download ---
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 },
+                colors: ['#00C2FF', '#FFD700', '#FFFFFF']
+            });
+        }
+
+        // --- Event Listeners ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Initialize Firebase directly on DOMContentLoaded
+            initFirebase(); 
+
+            closeModalBtn.addEventListener('click', closeClientDetails);
+            clientDetailModal.addEventListener('click', (e) => {
+                if (e.target === clientDetailModal) {
+                    closeClientDetails();
+                }
+            });
+
+            // Add mousemove listener for modal glow effect
+            const modalContent = document.getElementById('clientDetailModal').querySelector('.modal-content');
+            modalContent.addEventListener("mousemove", e => {
+                const rect = modalContent.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                modalContent.style.setProperty('--modal-x', `${x}px`);
+                modalContent.style.setProperty('--modal-y', `${y}px`);
+            });
+
+            // Event listener for download button in modal
+            modalDownloadLink.addEventListener('click', (e) => {
+                e.preventDefault(); // Prevent default link behavior
+                const clientId = modalDownloadLink.dataset.clientId;
+                const actualDownloadLink = modalDownloadLink.dataset.actualDownloadLink;
+                showDownloadPasswordOverlay(clientId, actualDownloadLink);
+            });
+
+            // Event listener for download password submission
+            downloadPasswordSubmit.addEventListener('click', async () => {
+                const clientId = downloadPasswordSubmit.dataset.clientId;
+                const actualDownloadLink = downloadPasswordSubmit.dataset.downloadLink;
+
+                if (downloadPasswordInput.value === DOWNLOAD_PASSWORD) {
+                    hideDownloadPasswordOverlay();
+                    downloadPasswordError.textContent = '';
+                    await incrementClientDownloadCount(clientId); // Increment count in Firestore
+                    triggerConfetti(); // Trigger confetti
+                    window.open(actualDownloadLink, '_blank'); // Open link in new tab
+                } else {
+                    downloadPasswordError.textContent = 'Mật khẩu tải xuống sai! Check lại đi.';
+                }
+            });
+
+            // Parallax on scroll
+            window.addEventListener('scroll', applyHeroParallax);
+            applyHeroParallax(); // Apply initially in case of refresh with scroll
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+</body>
+</html>
