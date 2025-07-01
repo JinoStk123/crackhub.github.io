@@ -249,6 +249,7 @@
             color: #c0c0c0;
             margin-bottom: 1.5rem;
             flex-grow: 1; /* Cho phép mô tả co giãn */
+            /* Đã bỏ text-align: left; để nó kế thừa từ modal-description */
         }
 
         .client-card-download-btn {
@@ -388,10 +389,31 @@
             color: #00C2FF; /* Màu xanh biển chính */
         }
 
+        /* New style for file password display */
+        .modal-file-password {
+            font-size: 1.15rem;
+            color: #FFD700; /* Màu vàng nổi bật */
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            padding: 0.75rem 1.25rem;
+            background-color: rgba(255, 215, 0, 0.1); /* Nền hơi vàng nhạt */
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 0.5rem;
+            display: inline-block; /* Để padding và border không chiếm hết chiều rộng */
+            position: relative;
+            z-index: 1;
+        }
+        .modal-file-password i {
+            margin-right: 0.75rem;
+            color: #FFD700;
+        }
+
+
         .modal-description {
             font-size: 1.1rem;
             color: #c0c0c0;
-            margin-bottom: 2.5rem;
+            margin-bottom: 1.5rem; /* Giảm margin-bottom để password nằm gần hơn */
             text-align: left;
             position: relative; /* Cần để z-index hoạt động */
             z-index: 1; /* Đảm bảo nội dung nằm trên glow */
@@ -463,6 +485,101 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+
+        /* Password Overlay Styles */
+        .password-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9); /* Nền đen mờ */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2500; /* Đảm bảo nằm trên modal chi tiết */
+            backdrop-filter: blur(8px); /* Hiệu ứng mờ nền */
+            -webkit-backdrop-filter: blur(8px); /* Safari support */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .password-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .password-modal {
+            background-color: rgba(26, 26, 26, 0.9); /* Nền modal mờ và trong suốt */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 1rem;
+            box-shadow: 0 0 30px rgba(0, 194, 255, 0.5); /* Phát sáng xanh biển */
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+            border: 1px solid rgba(0, 194, 255, 0.3);
+            animation: modalPopIn 0.3s ease-out forwards;
+            color: #e0e0e0;
+        }
+
+        @keyframes modalPopIn {
+            from { opacity: 0; transform: scale(0.9) translateY(-20px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .password-modal h2 {
+            color: #00C2FF;
+            margin-bottom: 25px;
+            font-size: 2em;
+            font-weight: 700;
+            text-shadow: 0 0 5px rgba(0, 194, 255, 0.3);
+        }
+
+        .password-modal input {
+            width: calc(100% - 30px); /* Full width minus padding */
+            margin-bottom: 20px;
+            padding: 15px;
+            font-size: 1.1em;
+            border-radius: 0.75rem;
+            border: 1px solid #00C2FF;
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .password-modal input:focus {
+            border-color: #0099CC;
+            box-shadow: 0 0 10px rgba(0, 194, 255, 0.6);
+        }
+
+        .password-modal button {
+            padding: 1rem 2.5rem;
+            font-size: 1.15rem;
+            background-color: #00C2FF;
+            color: white;
+            border-radius: 9999px;
+            font-weight: 700;
+            box-shadow: 0 5px 15px rgba(0, 194, 255, 0.4);
+            transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+        }
+
+        .password-modal button:hover {
+            background-color: #0099CC;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 194, 255, 0.6);
+        }
+
+        .error-message {
+            color: #FF4D4D; /* Màu đỏ cho lỗi */
+            margin-top: 15px;
+            font-size: 1em;
+            min-height: 1.5em; /* Giữ khoảng trống */
+            font-weight: 600;
         }
 
         /* Responsive adjustments */
@@ -538,6 +655,7 @@
     </style>
 </head>
 <body>
+    <!-- Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
@@ -546,7 +664,7 @@
         <div class="container">
             <nav>
                 <div class="logo">CrackHub</div>
-                </nav>
+            </nav>
         </div>
     </header>
 
@@ -565,7 +683,7 @@
             <div class="container">
                 <h2 class="text-4xl font-extrabold text-white mb-10">Thư Viện Client</h2>
                 <div id="clientGrid" class="client-grid">
-                    </div>
+                </div>
                 <div id="noResults" class="text-center text-gray-500 text-lg mt-10 hidden">
                     Không tìm thấy client nào phù hợp với yêu cầu của bạn.
                 </div>
@@ -588,9 +706,23 @@
                 </div>
             </div>
             <p id="modalClientDescription" class="modal-description">Mô tả chi tiết client.</p>
+            <!-- New element for file password -->
+            <p id="modalFilePassword" class="modal-file-password hidden">
+                <i class="fas fa-key"></i> Mật khẩu giải nén: <span id="filePasswordValue"></span>
+            </p>
             <a id="modalDownloadLink" href="#" target="_blank" class="modal-download-btn">
                 <i class="fas fa-cloud-download-alt"></i> Tải Xuống Ngay
             </a>
+        </div>
+    </div>
+
+    <!-- Download Password Overlay -->
+    <div id="downloadPasswordOverlay" class="password-overlay">
+        <div class="password-modal">
+            <h2>Nhập Mật Khẩu Để Tải Xuống</h2>
+            <input type="password" id="downloadPasswordInput" placeholder="Mật khẩu tải xuống">
+            <button id="downloadPasswordSubmit">Tải Xuống</button>
+            <p id="downloadPasswordError" class="error-message"></p>
         </div>
     </div>
 
@@ -601,282 +733,53 @@
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script>
-        // Dữ liệu Client mẫu (đã thêm lại Augustus)
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase variables (Canvas environment provides these)
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        let app;
+        let db;
+        let auth;
+        let userId; // Will be set after auth
+
+        // Initialize Firebase and authenticate
+        async function initFirebase() {
+            try {
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                // Authenticate user
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                // Set userId after authentication
+                userId = auth.currentUser?.uid || crypto.randomUUID();
+                console.log("Firebase initialized. User ID:", userId);
+                
+                // Now that Firebase is ready, load download count
+                await loadAllClientDownloadCounts(); // Load counts for all clients
+
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+            }
+        }
+
+        // Dữ liệu Client mẫu
         const clientsData = [
             {
                 id: 'client-slinky',
                 name: 'Slinky Client',
-                image: 'https://placehold.co/400x200/FF8C00/fff?text=Slinky+Client', // Giữ nguyên placeholder hoặc thay bằng ảnh Slinky
+                image: 'https://placehold.co/400x200/FF8C00/fff?text=Slinky+Client',
                 version: '1.7.10 - 1.8.9',
-                downloads: 1234,
-                type: 'Ghost',
-                shortDescription: 'Cre: mrnv & o',
-                fullDescription: 'Slinky consists of various modules, each offering a unique feature or advantage. Each module has its own page on this website, explaining its purpose and configuration. The modules are categorized in the same way as the in-game menu. Password: CrackHub',
-                downloadLink: 'https://mega.nz/file/ag4WBJrK#SPp0TGkSXPxN1xPIZGjgZo-zMbHIMdrE8B0A0RYkIRI',
-                animationIntervalId: null // Để lưu ID của setInterval cho animation của card
-            },
-            {
-                id: 'client-augustus',
-                name: 'Augustus Client',
-                image: 'https://placehold.co/400x200/00C2FF/fff?text=Augustus+Client',
-                version: '1.8.9',
-                downloads: 5678,
-                type: 'Blatant',
-                shortDescription: 'Cre: Nespola001',
-                fullDescription: 'Augustus Client là một standalone blatant PvP client cho Minecraft, chạy file riêng và tích hợp sẵn các module combat mạnh, hướng HVH và không giấu cheat. Password: CrackHub',
-                downloadLink: 'https://mega.nz/file/SkoniTYS#Hi-OsX3QJlwctKWt_yJt3aflMF6S3QkgMLoyWyJW9mc',
-                animationIntervalId: null
-            }
-        ];
-
-        // DOM Elements
-        const clientGrid = document.getElementById('clientGrid');
-        const noResultsMessage = document.getElementById('noResults');
-        const clientDetailModal = document.getElementById('clientDetailModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
-        const modalClientImage = document.getElementById('modalClientImage');
-        const modalClientName = document.getElementById('modalClientName');
-        const modalClientVersion = document.getElementById('modalClientVersion');
-        const modalClientDownloads = document.getElementById('modalClientDownloads');
-        const modalClientType = document.getElementById('modalClientType');
-        const modalClientDescription = document.getElementById('modalClientDescription');
-        const modalDownloadLink = document.getElementById('modalDownloadLink');
-        const heroSection = document.getElementById('hero');
-        const heroContent = document.querySelector('.hero-content');
-
-
-        // Function để bắt đầu animation số đếm
-        // Hàm này sẽ được dùng cho cả card và modal
-        function startDownloadCountAnimation(element, client) {
-            let downloadCountSpan;
-            if (element.classList.contains('client-card')) {
-                downloadCountSpan = element.querySelector('.download-count');
-            } else if (element.id === 'clientDetailModal') {
-                downloadCountSpan = element.querySelector('#modalClientDownloads');
-            }
-
-            if (!downloadCountSpan) return;
-
-            let currentAnimatedNumber = 1; // Bắt đầu từ 1
-            const targetNumber = 5; // Số đích đến
-
-            // Xóa animation cũ nếu có
-            if (client.animationIntervalId) {
-                clearInterval(client.animationIntervalId);
-            }
-
-            client.animationIntervalId = setInterval(() => {
-                downloadCountSpan.textContent = currentAnimatedNumber;
-                if (currentAnimatedNumber < targetNumber) {
-                    currentAnimatedNumber++;
-                } else {
-                    // Dừng animation khi đạt số đích
-                    clearInterval(client.animationIntervalId);
-                    client.animationIntervalId = null;
-                }
-            }, 100); // Tốc độ animation (100ms)
-        }
-
-        // Function to render clients to the grid
-        function renderClients(clientsToRender) {
-            clientGrid.innerHTML = ''; // Clear existing clients
-            if (clientsToRender.length === 0) {
-                noResultsMessage.classList.remove('hidden');
-            } else {
-                noResultsMessage.classList.add('hidden');
-                clientsToRender.forEach(client => {
-                    const clientCard = document.createElement('div');
-                    clientCard.className = 'client-card';
-                    clientCard.dataset.clientId = client.id; // Store ID for easy lookup
-                    clientCard.innerHTML = `
-                        <img class="client-card-image" data-src="${client.image}" alt="${client.name}" loading="lazy">
-                        <div class="client-card-content">
-                            <div>
-                                <h3 class="client-card-title">${client.name}</h3>
-                                <div class="client-card-info">
-                                    <span><i class="fas fa-gamepad"></i> ${client.version}</span>
-                                    <span><i class="fas fa-download"></i> <span class="download-count">1</span></span> </div>
-                                <p class="client-card-description">${client.shortDescription}</p>
-                            </div>
-                            <button class="client-card-download-btn">
-                                <i class="fas fa-arrow-down"></i> Chi tiết
-                            </button>
-                        </div>
-                    `;
-                    clientGrid.appendChild(clientCard);
-
-                    // Bắt đầu animation cho số lượt tải của card này
-                    startDownloadCountAnimation(clientCard, client);
-
-                    // Add event listener to the "Chi tiết" button or the card itself
-                    clientCard.querySelector('.client-card-download-btn').addEventListener('click', (e) => {
-                        e.stopPropagation(); // Prevent click event from bubbling up to the card
-                        showClientDetails(client.id);
-                    });
-                    // Add mousemove listener for glow effect
-                    clientCard.addEventListener("mousemove", e => {
-                        const rect = clientCard.getBoundingClientRect();
-                        const x = e.clientX - rect.left;
-                        const y = e.clientY - rect.top;
-                        clientCard.style.setProperty('--x', `${x}px`);
-                        clientCard.style.setProperty('--y', `${y}px`);
-                    });
-                });
-                lazyLoadImages(); // Apply lazy load after rendering
-                observeClientCards(); // Apply scroll reveal after rendering
-            }
-        }
-
-        // Function to show client details modal
-        function showClientDetails(clientId) {
-            const client = clientsData.find(c => c.id === clientId);
-            if (client) {
-                modalClientImage.src = client.image;
-                modalClientName.textContent = client.name;
-                modalClientVersion.textContent = client.version;
-                // Vẫn hiển thị animation cho lượt tải trong modal
-                modalClientDownloads.textContent = '1'; // Đặt lại 1 để animation bắt đầu lại trong modal
-                modalClientType.textContent = client.type;
-                modalClientDescription.textContent = client.fullDescription;
-                modalDownloadLink.href = client.downloadLink; // Set the download link
-                modalDownloadLink.setAttribute('download', ''); // Thêm thuộc tính download để trình duyệt tải trực tiếp
-                modalDownloadLink.dataset.clientId = clientId; // Lưu client ID vào nút tải xuống của modal
-                clientDetailModal.classList.add('active');
-
-                // Bắt đầu animation cho số lượt tải trong modal
-                startDownloadCountAnimation(clientDetailModal, client);
-            }
-        }
-
-        // Function to close client details modal
-        function closeClientDetails() {
-            clientDetailModal.classList.remove('active');
-            // Lấy client ID từ nút tải xuống của modal để biết client nào vừa được xem
-            const clientId = modalDownloadLink.dataset.clientId;
-            const client = clientsData.find(c => c.id === clientId);
-
-            // Dừng animation cho modal khi đóng
-            if (client && client.animationIntervalId) {
-                clearInterval(client.animationIntervalId);
-                client.animationIntervalId = null; // Đặt về null để biết không có animation nào đang chạy
-            }
-
-            // Đặt lại animation cho card khi modal đóng (nếu card đó vẫn còn)
-            if (client) {
-                 const cardElement = document.querySelector(`.client-card[data-client-id="${client.id}"]`);
-                 if (cardElement) {
-                     // Đảm bảo card cũng reset và chạy animation lại nếu cần
-                     startDownloadCountAnimation(cardElement, client);
-                 }
-            }
-        }
-
-        // --- Lazy Load Images ---
-        function lazyLoadImages() {
-            const lazyImages = document.querySelectorAll('img[data-src]');
-            const observer = new IntersectionObserver((entries, observer) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        const img = entry.target;
-                        img.src = img.dataset.src;
-                        img.removeAttribute('data-src');
-                        observer.unobserve(img);
-                    }
-                });
-            }, { rootMargin: '0px 0px 100px 0px' }); // Load khi ảnh cách viewport 100px
-
-            lazyImages.forEach(img => {
-                observer.observe(img);
-            });
-        }
-
-        // --- Scroll Reveal ---
-        const observerOptions = {
-            root: null, // viewport
-            rootMargin: '0px',
-            threshold: 0.1 // 10% of the element must be visible
-        };
-
-        const clientCardObserver = new IntersectionObserver((entries, observer) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                    observer.unobserve(entry.target);
-                }
-            });
-        }, observerOptions);
-
-        function observeClientCards() {
-            const clientCards = document.querySelectorAll('.client-card');
-            clientCards.forEach(card => {
-                clientCardObserver.observe(card);
-            });
-        }
-
-        // --- Hero Parallax Effect ---
-        function applyHeroParallax() {
-            const scrollPosition = window.scrollY;
-            const heroHeight = heroSection.offsetHeight;
-
-            // Tính toán mức độ dịch chuyển, tối đa là 50px
-            const parallaxAmount = Math.min(scrollPosition * 0.3, 50); // Điều chỉnh 0.3 để thay đổi tốc độ parallax
-
-            heroContent.style.setProperty('--parallax-y', `${parallaxAmount}px`);
-        }
-
-        // --- Confetti Effect on Download ---
-        function triggerConfetti() {
-            confetti({
-                particleCount: 100,
-                spread: 70,
-                origin: { y: 0.6 },
-                colors: ['#00C2FF', '#FFD700', '#FFFFFF']
-            });
-        }
-
-        // --- Auto Increment Download Count (chỉ tăng số liệu, không hiển thị) ---
-        function incrementDownloadCount(clientId) {
-            const clientIndex = clientsData.findIndex(c => c.id === clientId);
-            if (clientIndex !== -1) {
-                clientsData[clientIndex].downloads++; // Vẫn tăng số liệu thực tế ở backend/data
-                console.log(`Client ${clientId} downloads: ${clientsData[clientIndex].downloads}`); // Log ra để biết nó vẫn tăng
-            }
-        }
-
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            renderClients(clientsData); // Render all clients initially
-
-            closeModalBtn.addEventListener('click', closeClientDetails);
-            clientDetailModal.addEventListener('click', (e) => {
-                if (e.target === clientDetailModal) { // Close when clicking outside content
-                    closeClientDetails();
-                }
-            });
-
-            // Add mousemove listener for modal glow effect
-            const modalContent = document.getElementById('clientDetailModal').querySelector('.modal-content');
-            modalContent.addEventListener("mousemove", e => {
-                const rect = modalContent.getBoundingClientRect();
-                const x = e.clientX - rect.left;
-                const y = e.clientY - rect.top;
-                modalContent.style.setProperty('--modal-x', `${x}px`);
-                modalContent.style.setProperty('--modal-y', `${y}px`);
-            });
-
-            // Add event listener for download button in modal
-            modalDownloadLink.addEventListener('click', (e) => {
-                const clientId = modalDownloadLink.dataset.clientId; // Lấy ID của client từ data attribute
-                triggerConfetti();
-                incrementDownloadCount(clientId);
-            });
-
-            // Parallax on scroll
-            window.addEventListener('scroll', applyHeroParallax);
-            applyHeroParallax(); // Apply initially in case of refresh with scroll
-        });
-    </script>
-</body>
-</html>
+                downloads
