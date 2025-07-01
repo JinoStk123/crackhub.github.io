@@ -55,7 +55,7 @@
         /* Hero Section */
         .hero-section {
             background: linear-gradient(135deg, #1f1f1f 0%, #0a0a0a 100%); /* Gradient tối */
-            min-height: 40vh; /* Giảm chiều cao, tập trung vào nội dung chính */
+            min-height: 60vh; /* Tăng chiều cao để có nhiều không gian hơn */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -101,20 +101,23 @@
         }
 
         .hero-section h1 {
-            font-size: 3.5rem;
+            font-size: 4.5rem; /* Tăng kích thước chữ tiêu đề */
             font-weight: 800;
             color: white;
-            margin-bottom: 1rem;
+            margin-bottom: 1.5rem; /* Tăng khoảng cách dưới tiêu đề */
             letter-spacing: -1px;
             line-height: 1.1;
+            text-align: center; /* Đảm bảo căn giữa cho tiêu đề */
         }
 
         .hero-section p {
-            font-size: 1.2rem;
+            font-size: 1.3rem; /* Tăng kích thước chữ đoạn văn */
             color: #bbb;
-            margin-bottom: 2rem;
+            margin-bottom: 2.5rem; /* Tăng khoảng cách dưới đoạn văn */
             max-width: 700px;
-            text-align: center; /* Đã thêm để căn giữa đoạn văn bản này */
+            text-align: center;
+            margin-left: auto; /* Căn giữa khối p */
+            margin-right: auto; /* Căn giữa khối p */
         }
 
         /* Các nút chính (Tải ngay) */
@@ -154,7 +157,7 @@
             position: relative; /* Cần để pseudo-element ::before hoạt động */
             width: 100%; /* Đảm bảo chiều rộng */
             padding: 0; /* Đặt padding về 0 để ::before bao phủ đúng */
-            border-radius: 1rem;
+            border-radius: 1rem; /* Bo tròn viền cho card */
             overflow: hidden; /* Quan trọng để glow không bị tràn ra ngoài */
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
             transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
@@ -203,6 +206,7 @@
             width: 100%;
             height: 200px; /* Chiều cao cố định cho ảnh */
             object-fit: cover;
+            border-radius: 1rem 1rem 0 0; /* Bo tròn chỉ ở trên cho ảnh thẻ */
             position: relative; /* Cần để z-index hoạt động */
             z-index: 1; /* Đảm bảo ảnh nằm trên glow */
         }
@@ -256,7 +260,7 @@
             background-color: #00C2FF; /* Màu xanh biển chính */
             color: white;
             padding: 0.8rem 1.2rem;
-            border-radius: 0.5rem;
+            border-radius: 0.5rem; /* Bo tròn viền cho nút tải xuống trong card */
             font-size: 1rem;
             font-weight: 600;
             text-decoration: none;
@@ -299,7 +303,7 @@
             background-color: rgba(26, 26, 26, 0.85); /* Nền modal mờ và trong suốt */
             backdrop-filter: blur(15px); /* Hiệu ứng kính mờ (frosted glass) */
             -webkit-backdrop-filter: blur(15px); /* Hỗ trợ Safari */
-            border-radius: 1rem;
+            border-radius: 1rem; /* Bo tròn viền cho modal */
             max-width: 900px;
             width: 90%;
             max-height: 90vh; /* Giới hạn chiều cao */
@@ -367,7 +371,7 @@
             width: 200px;
             height: 200px;
             object-fit: cover;
-            border-radius: 0.75rem;
+            border-radius: 0.75rem; /* Bo tròn viền cho ảnh trong modal */
             border: 1px solid #3a3a3a;
         }
 
@@ -399,7 +403,7 @@
             padding: 0.75rem 1.25rem;
             background-color: rgba(255, 215, 0, 0.1); /* Nền hơi vàng nhạt */
             border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 0.5rem;
+            border-radius: 0.5rem; /* Bo tròn viền cho mật khẩu file */
             display: inline-block; /* Để padding và border không chiếm hết chiều rộng */
             position: relative;
             z-index: 1;
@@ -423,7 +427,7 @@
             background-color: #00C2FF; /* Màu xanh biển chính */
             color: white;
             padding: 1rem 2.5rem;
-            border-radius: 9999px;
+            border-radius: 9999px; /* Bo tròn viền cho nút tải xuống trong modal */
             font-size: 1.15rem;
             font-weight: 700;
             text-decoration: none;
@@ -673,8 +677,8 @@
     <main>
         <section id="hero" class="hero-section">
             <div class="hero-content">
-                <h1>Khám Phá Sức Mạnh Vô Hạn Của Minecraft</h1>
-                <p>Nơi tổng hợp các client modded chất lượng cao, giúp bạn nâng tầm trải nghiệm chơi game lên một tầm cao mới. Tải ngay!</p>
+                <h1>CrackHub: Giải Phóng Sức Mạnh Hack Client Của Bạn</h1>
+                <p style="margin-left: auto; margin-right: auto;">Khám phá bộ sưu tập hack client Minecraft đỉnh cao, giúp bạn thống trị mọi trận đấu và trải nghiệm game không giới hạn.</p>
                 <a href="#browse-clients" class="btn-primary flex items-center justify-center gap-2">
                     <i class="fas fa-arrow-down"></i> Bắt Đầu Khám Phá
                 </a>
