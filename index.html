@@ -742,6 +742,8 @@
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
 
         // Your web app's Firebase configuration
+        // LƯU Ý QUAN TRỌNG: Đảm bảo các giá trị này khớp chính xác với cấu hình ứng dụng web của bạn trong Firebase Console.
+        // Truy cập: Firebase Console -> Project settings (biểu tượng bánh răng cưa) -> General -> Your apps -> Web app của bạn.
         const firebaseConfig = {
             apiKey: "AIzaSyDPOcz7FZTSrX2jmYy-bKXdJxELJckWWvo",
             authDomain: "crackhub-c1adf.firebaseapp.com",
@@ -759,28 +761,43 @@
         let userId; // Will be set after auth
 
         // Use projectId for constructing Firestore paths
+        // Đảm bảo projectId này khớp với projectId trong firebaseConfig và là tên dự án Firebase của bạn.
         const currentAppId = firebaseConfig.projectId;
 
         // Initialize Firebase and authenticate
         async function initFirebase() {
             try {
+                console.log("Đang khởi tạo Firebase...");
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
                 analytics = getAnalytics(app); // Initialize analytics
+                console.log("Firebase App, Firestore, Auth, Analytics đã được khởi tạo.");
 
                 // Authenticate user anonymously
+                // LƯU Ý QUAN TRỌNG: Đảm bảo phương thức đăng nhập "Anonymous" đã được BẬT trong Firebase Console.
+                // Truy cập: Firebase Console -> Authentication -> Sign-in method -> Anonymous.
+                console.log("Đang cố gắng đăng nhập ẩn danh...");
                 await signInAnonymously(auth);
+                console.log("Đăng nhập ẩn danh thành công. User ID:", auth.currentUser?.uid);
 
                 // Set userId after authentication
                 userId = auth.currentUser?.uid || crypto.randomUUID();
-                console.log("Firebase initialized. User ID:", userId);
+                console.log("Firebase đã khởi tạo hoàn tất. User ID:", userId);
                 
                 // Now that Firebase is ready, load download count
+                console.log("Đang tải số lượt tải client từ Firestore...");
                 await loadAllClientDownloadCounts(); // Load counts for all clients
+                console.log("Đã tải xong số lượt tải client và render giao diện.");
 
             } catch (error) {
-                console.error("Error initializing Firebase:", error);
+                console.error("LỖI KHỞI TẠO FIREBASE:", error);
+                // Hiển thị thông báo lỗi chi tiết hơn cho người dùng để họ biết cần kiểm tra gì.
+                const errorMessageElement = document.getElementById('noResults'); // Sử dụng lại element này để hiển thị lỗi
+                if (errorMessageElement) {
+                    errorMessageElement.classList.remove('hidden');
+                    errorMessageElement.textContent = `Lỗi khởi tạo Firebase: ${error.message}. Vui lòng kiểm tra lại cấu hình Firebase trong console của bạn (API Key, Project ID, và bật Anonymous Sign-in) hoặc quy tắc bảo mật Firestore.`;
+                }
             }
         }
 
@@ -841,29 +858,46 @@
         // --- Firebase Download Count Logic ---
         async function loadAllClientDownloadCounts() {
             if (!db) {
-                console.error("Firestore not initialized for loading download counts.");
+                console.error("Firestore chưa được khởi tạo. Không thể tải số lượt tải.");
+                // Hiển thị lỗi trên UI
+                const errorMessageElement = document.getElementById('noResults');
+                if (errorMessageElement) {
+                    errorMessageElement.classList.remove('hidden');
+                    errorMessageElement.textContent = "Lỗi: Firestore chưa sẵn sàng. Vui lòng kiểm tra console để biết chi tiết.";
+                }
                 return;
             }
             showLoading();
             try {
                 for (const client of clientsData) {
-                    const docRef = doc(db, `artifacts/${currentAppId}/public/data/clientDownloads`, client.id);
+                    // Đường dẫn Firestore cần khớp với quy tắc bảo mật của bạn.
+                    // Ví dụ: artifacts/crackhub-c1adf/public/data/clientDownloads/client-slinky
+                    const docPath = `artifacts/${currentAppId}/public/data/clientDownloads/${client.id}`;
+                    console.log(`Đang cố gắng tải tài liệu Firestore từ đường dẫn: ${docPath}`);
+                    const docRef = doc(db, docPath);
                     const docSnap = await getDoc(docRef);
 
                     if (docSnap.exists()) {
                         client.downloads = docSnap.data().count || 0;
+                        console.log(`Đã tìm thấy lượt tải cho ${client.id}: ${client.downloads}`);
                     } else {
-                        // Initialize if not exists
+                        // Khởi tạo nếu chưa tồn tại
                         await setDoc(docRef, { count: 0 });
                         client.downloads = 0;
+                        console.log(`Khởi tạo lượt tải cho ${client.id}: 0`);
                     }
                 }
-                renderClients(clientsData); // Re-render clients with updated download counts
+                renderClients(clientsData); // Render clients với số lượt tải đã cập nhật
             } catch (error) {
-                console.error("Error loading all client download counts:", error);
-                // Fallback to 0 or display error if Firestore fails
-                clientsData.forEach(client => client.downloads = "Lỗi");
-                renderClients(clientsData);
+                console.error("LỖI TẢI LƯỢT TẢI CLIENT TỪ FIRESTORE:", error);
+                // Hiển thị thông báo lỗi thân thiện hơn trên UI
+                const errorMessageElement = document.getElementById('noResults');
+                if (errorMessageElement) {
+                    errorMessageElement.classList.remove('hidden');
+                    errorMessageElement.textContent = `Lỗi tải dữ liệu client: ${error.message}. Vui lòng kiểm tra quy tắc bảo mật Firestore của bạn và đảm bảo database đã được tạo.`;
+                }
+                clientsData.forEach(client => client.downloads = "Lỗi"); // Fallback
+                renderClients(clientsData); // Vẫn cố gắng render với dữ liệu lỗi
             } finally {
                 hideLoading();
             }
@@ -871,7 +905,7 @@
 
         async function incrementClientDownloadCount(clientId) {
             if (!db) {
-                console.error("Firestore not initialized for incrementing download count.");
+                console.error("Firestore chưa được khởi tạo. Không thể tăng lượt tải.");
                 return;
             }
             try {
@@ -900,9 +934,9 @@
                         modalClientDownloads.textContent = newCount;
                     }
                 }
-                console.log(`Download count for ${clientId} incremented to: ${newCount}`);
+                console.log(`Lượt tải cho ${clientId} đã tăng lên: ${newCount}`);
             } catch (error) {
-                console.error("Error incrementing download count for", clientId, ":", error);
+                console.error("LỖI TĂNG LƯỢT TẢI CHO", clientId, ":", error);
             }
         }
 
@@ -933,6 +967,7 @@
             clientGrid.innerHTML = '';
             if (clientsToRender.length === 0) {
                 noResultsMessage.classList.remove('hidden');
+                noResultsMessage.textContent = "Không tìm thấy client nào phù hợp với yêu cầu của bạn.";
             } else {
                 noResultsMessage.classList.add('hidden');
                 clientsToRender.forEach(client => {
