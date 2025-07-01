@@ -735,19 +735,31 @@
 
     <!-- Firebase SDKs -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+        import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-analytics.js";
 
-        // Global Firebase variables (Canvas environment provides these)
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB2S9V-EhHHsCQ_rxEUgA5DXfeZkFwOijY",
+            authDomain: "nespola-294d7.firebaseapp.com",
+            projectId: "nespola-294d7",
+            storageBucket: "nespola-294d7.firebasestorage.app",
+            messagingSenderId: "893545252364",
+            appId: "1:893545252364:web:75d69d84fbb36c72795029",
+            measurementId: "G-RLW6XVTSXJ"
+        };
 
         let app;
         let db;
         let auth;
+        let analytics; // Declare analytics variable
         let userId; // Will be set after auth
+
+        // Use projectId for constructing Firestore paths
+        const currentAppId = firebaseConfig.projectId;
 
         // Initialize Firebase and authenticate
         async function initFirebase() {
@@ -755,13 +767,10 @@
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app);
+                analytics = getAnalytics(app); // Initialize analytics
 
-                // Authenticate user
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
+                // Authenticate user anonymously
+                await signInAnonymously(auth);
 
                 // Set userId after authentication
                 userId = auth.currentUser?.uid || crypto.randomUUID();
@@ -822,14 +831,11 @@
         const loadingOverlay = document.getElementById('loadingOverlay');
 
         // Password Elements
-        // Removed mainPasswordOverlay related elements
-
         const downloadPasswordOverlay = document.getElementById('downloadPasswordOverlay');
         const downloadPasswordInput = document.getElementById('downloadPasswordInput');
         const downloadPasswordSubmit = document.getElementById('downloadPasswordSubmit');
         const downloadPasswordError = document.getElementById('downloadPasswordError');
 
-        // Removed MAIN_PAGE_PASSWORD
         const DOWNLOAD_PASSWORD = "CrackHub"; // Mật khẩu tải xuống client
 
         // --- Firebase Download Count Logic ---
@@ -841,7 +847,7 @@
             showLoading();
             try {
                 for (const client of clientsData) {
-                    const docRef = doc(db, `artifacts/${appId}/public/data/clientDownloads`, client.id);
+                    const docRef = doc(db, `artifacts/${currentAppId}/public/data/clientDownloads`, client.id);
                     const docSnap = await getDoc(docRef);
 
                     if (docSnap.exists()) {
@@ -869,7 +875,7 @@
                 return;
             }
             try {
-                const docRef = doc(db, `artifacts/${appId}/public/data/clientDownloads`, clientId);
+                const docRef = doc(db, `artifacts/${currentAppId}/public/data/clientDownloads`, clientId);
                 const docSnap = await getDoc(docRef);
                 let currentCount = 0;
 
@@ -908,9 +914,6 @@
         function hideLoading() {
             loadingOverlay.classList.remove('active');
         }
-
-        // --- Password Logic ---
-        // Removed showMainPasswordOverlay and hideMainPasswordOverlay functions
 
         function showDownloadPasswordOverlay(clientId, downloadLink) {
             downloadPasswordOverlay.classList.add('active');
