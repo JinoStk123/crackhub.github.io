@@ -416,6 +416,36 @@
             color: #FFD700;
         }
 
+        /* New style for version selector */
+        .modal-version-selector {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .modal-version-selector label {
+            font-size: 1.0rem;
+            color: #e0e0e0;
+            font-weight: 600;
+            margin-right: 1rem;
+        }
+
+        .modal-version-selector select {
+            background-color: #1a1a1a;
+            border: 1px solid #00C2FF;
+            color: #e0e0e0;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 1.0rem;
+            outline: none;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .modal-version-selector select:focus {
+            border-color: #0099CC;
+            box-shadow: 0 0 8px rgba(0, 194, 255, 0.4);
+        }
 
         .modal-description {
             font-size: 1.0rem; /* Giảm kích thước font */
@@ -601,30 +631,6 @@
                 </div>
             </div>
         </section>
-
-        <!-- New section for Update Log -->
-        <section id="update-log-section" class="client-grid-section">
-            <div class="container">
-                <h2 class="text-3xl font-extrabold text-white mb-8">Nhật Ký Cập Nhật</h2> <!-- Giảm kích thước heading -->
-                <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-                    <h3 class="text-xl font-bold text-white mb-4">Tổng quan:</h3> <!-- Giảm kích thước heading -->
-                    <p class="text-gray-300 mb-6 text-sm">Đã thực hiện một số cải tiến về giao diện và chức năng để làm cho trang web của bạn trông hiện đại hơn, thân thiện với người dùng hơn và phù hợp hơn với thương hiệu "CrackHub".</p> <!-- Giảm kích thước font -->
-
-                    <h3 class="text-xl font-bold text-white mb-4">Chi tiết các thay đổi:</h3> <!-- Giảm kích thước heading -->
-                    <ul class="list-disc list-inside text-gray-300 space-y-2 text-sm"> <!-- Giảm kích thước font -->
-                        <li>**Tải Xuống Công Khai:** Đã loại bỏ yêu cầu mật khẩu tải xuống, cho phép tải client trực tiếp.</li>
-                        <li>**Bo Tròn Viền:** Bo tròn các góc của thẻ client, ảnh thẻ, modal, ảnh modal, và các nút tải xuống.</li>
-                        <li>**Cải Tiến Phần Đầu Trang (Hero Section):**
-                            <ul class="list-circle list-inside ml-6 space-y-1 text-sm"> <!-- Giảm kích thước font -->
-                                <li>**Kích thước và Khoảng cách:** Điều chỉnh kích thước và khoảng cách cho tiêu đề, mô tả để tăng không gian và sự nổi bật.</li>
-                                <li>**Căn giữa Đoạn Mô Tả:** Đảm bảo đoạn mô tả được căn giữa hoàn hảo.</li>
-                                <li>**Nội dung "Hack Client":** Cập nhật tiêu đề và mô tả để phù hợp với chủ đề "Hack Client".</li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </section>
     </main>
 
     <div id="clientDetailModal" class="modal-overlay">
@@ -642,7 +648,16 @@
                 </div>
             </div>
             <p id="modalClientDescription" class="modal-description">Mô tả chi tiết client.</p>
-            <!-- File password display (still available but not required for download) -->
+            
+            <!-- New version selector for Rise Client only -->
+            <div id="modalVersionSelector" class="modal-version-selector hidden">
+                <label for="riseVersionSelect">Chọn phiên bản:</label>
+                <select id="riseVersionSelect">
+                    <!-- Options will be populated by JavaScript -->
+                </select>
+            </div>
+
+            <!-- File password display -->
             <p id="modalFilePassword" class="modal-file-password hidden">
                 <i class="fas fa-key"></i> Mật khẩu giải nén: <span id="filePasswordValue"></span>
             </p>
@@ -748,10 +763,28 @@
                 version: '1.8.9',
                 downloads: 0, // Sẽ được cập nhật từ Firestore
                 type: 'Blatant',
-                shortDescription: 'Cre: Nespola001',
+                shortDescription: 'Cre: @NESPOLAONTOPS', // Cập nhật creator
                 fullDescription: 'Augustus Client là một standalone blatant PvP client cho Minecraft, chạy file riêng và tích hợp sẵn các module combat mạnh, hướng HVH và không giấu cheat.',
                 filePassword: 'CrackHub', // Mật khẩu giải nén file riêng biệt
                 downloadLink: 'https://mega.nz/file/SkoniTYS#Hi-OsX3QJlwctKWt_yJt3aflMF6S3QkgMLoyWyJW9mc'
+            },
+            {
+                id: 'client-rise',
+                name: 'Rise Client',
+                image: 'https://placehold.co/400x200/8A2BE2/fff?text=Rise+Client', // Màu tím cho Rise
+                version: '1.8.9', // Phiên bản hiển thị trên card
+                downloads: 0,
+                type: 'Blatant',
+                shortDescription: 'Cre: @NESPOLAONTOPS', // Cập nhật creator
+                fullDescription: 'Rise Client là một trong những hack client mạnh mẽ nhất, nổi tiếng với các tính năng PvP và bypass anticheat hiệu quả. Tùy chỉnh phiên bản để phù hợp với nhu cầu của bạn.',
+                filePassword: 'CrackHub',
+                // downloadLink: 'https://mega.nz/file/Ph4USBrI#xn20a7f0zFW4kCq2BeNobalHe_5mlKfJJ6rxO3HgcCQ', // Không dùng link chung nữa
+                versionsAvailable: [ // Cập nhật các phiên bản có sẵn và link tải riêng
+                    { version: '6.6.1', downloadLink: 'https://mega.nz/file/Ph4USBrI#xn20a7f0zFW4kCq2BeNobalHe_5mlKfJJ6rxO3HgcCQ' },
+                    { version: '6.6.2', downloadLink: 'https://mega.nz/file/y9BABbqb#09msoPdHfTfqTK0UR52B0eV2zxxmdT-8syCxmYAIEV4' },
+                    { version: '6.6.3', downloadLink: 'https://mega.nz/file/StpGTBBK#-ZFiBDTelYDrAnr0_5TTvRQ0XgSEF0wuruh4EgGm5LA' },
+                    { version: '6.6.4', downloadLink: 'https://mega.nz/file/vpBwxLCL#wboHSo7SIKITDsSu_vVEn4h0c094wDCaS2e8hewwgag' }
+                ] 
             }
         ];
 
@@ -772,14 +805,8 @@
         const heroSection = document.getElementById('hero');
         const heroContent = document.querySelector('.hero-content');
         const loadingOverlay = document.getElementById('loadingOverlay');
-
-        // Password Elements (Removed for public download)
-        // const downloadPasswordOverlay = document.getElementById('downloadPasswordOverlay');
-        // const downloadPasswordInput = document.getElementById('downloadPasswordInput');
-        // const downloadPasswordSubmit = document.getElementById('downloadPasswordSubmit');
-        // const downloadPasswordError = document.getElementById('downloadPasswordError');
-
-        // const DOWNLOAD_PASSWORD = "CrackHub"; // Mật khẩu tải xuống client (Removed for public download)
+        const modalVersionSelector = document.getElementById('modalVersionSelector'); // New element
+        const riseVersionSelect = document.getElementById('riseVersionSelect'); // New element
 
         // --- Firebase Download Count Logic ---
         async function loadAllClientDownloadCounts() {
@@ -815,15 +842,15 @@
                 }
                 renderClients(clientsData); // Render clients với số lượt tải đã cập nhật
             } catch (error) {
-                console.error("LỖI TẢI LƯỢT TẢI CLIENT TỪ FIRESTORE:", error);
-                // Hiển thị thông báo lỗi thân thiện hơn trên UI
-                const errorMessageElement = document.getElementById('noResults');
-                if (errorMessageElement) {
-                    errorMessageElement.classList.remove('hidden');
-                    errorMessageElement.textContent = `Lỗi tải dữ liệu client: ${error.message}. Vui lòng kiểm tra quy tắc bảo mật Firestore của bạn và đảm bảo database đã được tạo.`;
-                }
-                clientsData.forEach(client => client.downloads = "Lỗi"); // Fallback
-                renderClients(clientsData); // Vẫn cố gắng render với dữ liệu lỗi
+                    console.error("LỖI TẢI LƯỢT TẢI CLIENT TỪ FIRESTORE:", error);
+                    // Hiển thị thông báo lỗi thân thiện hơn trên UI
+                    const errorMessageElement = document.getElementById('noResults');
+                    if (errorMessageElement) {
+                        errorMessageElement.classList.remove('hidden');
+                        errorMessageElement.textContent = `Lỗi tải dữ liệu client: ${error.message}. Vui lòng kiểm tra quy tắc bảo mật Firestore của bạn và đảm bảo database đã được tạo.`;
+                    }
+                    clientsData.forEach(client => client.downloads = "Lỗi"); // Fallback
+                    renderClients(clientsData); // Vẫn cố gắng render với dữ liệu lỗi
             } finally {
                 hideLoading();
             }
@@ -874,8 +901,6 @@
         function hideLoading() {
             loadingOverlay.classList.remove('active');
         }
-
-        // Removed showDownloadPasswordOverlay and hideDownloadPasswordOverlay functions
 
         // --- Render Clients ---
         function renderClients(clientsToRender) {
@@ -930,7 +955,6 @@
             if (client) {
                 modalClientImage.src = client.image;
                 modalClientName.textContent = client.name;
-                modalClientVersion.textContent = client.version;
                 modalClientDownloads.textContent = client.downloads; // Display actual count
                 modalClientType.textContent = client.type;
                 modalClientDescription.textContent = client.fullDescription;
@@ -944,9 +968,35 @@
                     modalFilePassword.classList.add('hidden'); // Hide if no password found
                 }
 
-                // Store client ID and link on the download button itself
+                // Handle version display and selector based on client
+                if (clientId === 'client-rise' && client.versionsAvailable) {
+                    modalClientVersion.textContent = `Phiên bản: 6.6.1 - 6.6.4`; // Hardcode display for Rise's version range in modal
+                    modalVersionSelector.classList.remove('hidden');
+                    riseVersionSelect.innerHTML = ''; // Clear previous options
+                    client.versionsAvailable.forEach(versionData => { // Iterate over objects
+                        const option = document.createElement('option');
+                        option.value = versionData.downloadLink; // Store the download link as value
+                        option.textContent = versionData.version; // Display the version string
+                        riseVersionSelect.appendChild(option);
+                    });
+                    // Set initial download link to the first version's link
+                    if (client.versionsAvailable.length > 0) {
+                        modalDownloadLink.href = client.versionsAvailable[0].downloadLink;
+                    }
+
+                    // Add event listener for version selection change
+                    riseVersionSelect.onchange = (event) => {
+                        modalDownloadLink.href = event.target.value; // Update download link based on selected option's value
+                    };
+
+                } else {
+                    modalClientVersion.textContent = `Phiên bản: ${client.version}`; // Show static version for other clients
+                    modalVersionSelector.classList.add('hidden');
+                    modalDownloadLink.href = client.downloadLink; // Set direct download link for other clients
+                }
+
+                // Store client ID on the download button itself (actualDownloadLink is now dynamic)
                 modalDownloadLink.dataset.clientId = client.id;
-                modalDownloadLink.dataset.actualDownloadLink = client.downloadLink;
 
                 clientDetailModal.classList.add('active');
             }
@@ -956,6 +1006,8 @@
         function closeClientDetails() {
             clientDetailModal.classList.remove('active');
             modalFilePassword.classList.add('hidden'); // Hide password when closing modal
+            modalVersionSelector.classList.add('hidden'); // Hide version selector when closing modal
+            riseVersionSelect.onchange = null; // Remove event listener to prevent issues
         }
 
         // --- Lazy Load Images ---
@@ -1044,14 +1096,13 @@
             modalDownloadLink.addEventListener('click', async (e) => {
                 e.preventDefault(); // Prevent default link behavior
                 const clientId = modalDownloadLink.dataset.clientId;
-                const actualDownloadLink = modalDownloadLink.dataset.actualDownloadLink;
+                // The actual download link is now taken directly from modalDownloadLink.href
+                // const actualDownloadLink = modalDownloadLink.dataset.actualDownloadLink; 
 
                 await incrementClientDownloadCount(clientId); // Increment count in Firestore
                 triggerConfetti(); // Trigger confetti
-                window.open(actualDownloadLink, '_blank'); // Open link in new tab
+                window.open(modalDownloadLink.href, '_blank'); // Open link in new tab
             });
-
-            // Removed event listener for download password submission
 
             // Parallax on scroll
             window.addEventListener('scroll', applyHeroParallax);
