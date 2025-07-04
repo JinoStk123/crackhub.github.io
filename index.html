@@ -452,7 +452,7 @@
             color: #c0c0c0;
             margin-bottom: 1.5rem; /* Giảm margin-bottom để password nằm gần hơn */
             text-align: left;
-            position: relative; /* Cần để z-index hoạt động */
+            position: relative;
             z-index: 1; /* Đảm bảo nội dung nằm trên glow */
         }
 
@@ -910,6 +910,9 @@
                 noResultsMessage.textContent = "Không tìm thấy client nào phù hợp với yêu cầu của bạn.";
             } else {
                 noResultsMessage.classList.add('hidden');
+                // Sort clients by downloads in descending order
+                clientsToRender.sort((a, b) => b.downloads - a.downloads);
+
                 clientsToRender.forEach(client => {
                     const clientCard = document.createElement('div');
                     clientCard.className = 'client-card';
@@ -970,7 +973,7 @@
 
                 // Handle version display and selector based on client
                 if (clientId === 'client-rise' && client.versionsAvailable) {
-                    modalClientVersion.textContent = `Phiên bản: 6.6.1 - 6.6.4`; // Hardcode display for Rise's version range in modal
+                    modalClientVersion.textContent = `6.6.1 - 6.6.4`; // Hardcode display for Rise's version range in modal
                     modalVersionSelector.classList.remove('hidden');
                     riseVersionSelect.innerHTML = ''; // Clear previous options
                     client.versionsAvailable.forEach(versionData => { // Iterate over objects
@@ -990,7 +993,7 @@
                     };
 
                 } else {
-                    modalClientVersion.textContent = `Phiên bản: ${client.version}`; // Show static version for other clients
+                    modalClientVersion.textContent = client.version; // Show static version for other clients
                     modalVersionSelector.classList.add('hidden');
                     modalDownloadLink.href = client.downloadLink; // Set direct download link for other clients
                 }
@@ -1096,8 +1099,6 @@
             modalDownloadLink.addEventListener('click', async (e) => {
                 e.preventDefault(); // Prevent default link behavior
                 const clientId = modalDownloadLink.dataset.clientId;
-                // The actual download link is now taken directly from modalDownloadLink.href
-                // const actualDownloadLink = modalDownloadLink.dataset.actualDownloadLink; 
 
                 await incrementClientDownloadCount(clientId); // Increment count in Firestore
                 triggerConfetti(); // Trigger confetti
