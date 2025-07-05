@@ -525,7 +525,7 @@
             border-radius: 1rem; /* Fully rounded corners */
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7); /* General shadow */
             border: 1px solid rgba(255, 255, 255, 0.1); /* Light border */
-            overflow-y: auto; /* Allow scrolling within the modal */
+            overflow: hidden; /* Changed from auto to hidden to remove scrollbar */
             display: flex;
             flex-direction: column;
             z-index: 2005; /* Higher z-index than main modal */
@@ -1156,7 +1156,7 @@
                 modalFilePasswordLabel: 'Mật khẩu giải nén:',
                 modalFilePasswordNone: 'Không có',
                 modalDownloadButton: 'Tải Xuống Ngay',
-                modalSelectVersion: 'Chọn phiên bản:',
+                modalSelectVersion: 'Chọn phiên bản:', // This translation key is no longer used for a DOM element
                 tabDetails: 'Chi tiết',
                 tabVersions: 'Phiên bản',
                 versionsSidebarTitle: 'Chọn phiên bản Rise Client',
@@ -1182,7 +1182,7 @@
                 modalFilePasswordLabel: 'Extraction password:',
                 modalFilePasswordNone: 'None',
                 modalDownloadButton: 'Download Now',
-                modalSelectVersion: 'Select version:',
+                modalSelectVersion: 'Select version:', // This translation key is no longer used for a DOM element
                 tabDetails: 'Details',
                 tabVersions: 'Versions',
                 versionsSidebarTitle: 'Select Rise Client Version',
@@ -1213,7 +1213,7 @@
             document.querySelector('[data-key="modalFilePasswordLabel"]').textContent = t.modalFilePasswordLabel;
             
             document.querySelector('[data-key="modalDownloadButton"]').textContent = t.modalDownloadButton;
-            document.querySelector('[data-key="modalSelectVersion"]').textContent = t.modalSelectVersion;
+            // Removed the line causing the error: document.querySelector('[data-key="modalSelectVersion"]').textContent = t.modalSelectVersion;
             document.querySelector('[data-key="tabDetails"]').textContent = t.tabDetails; // Update tab button text
             document.querySelector('[data-key="tabVersions"]').textContent = t.tabVersions; // Update tab button text
             document.querySelector('[data-key="versionsSidebarTitle"]').textContent = t.versionsSidebarTitle; // Update sidebar title
