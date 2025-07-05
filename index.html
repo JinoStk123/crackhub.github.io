@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" style="scroll-behavior: smooth;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,15 +44,38 @@
         }
 
         .logo {
-            font-size: 2.0rem; /* Giảm kích thước logo */
+            font-size: 2.0rem;
             font-weight: 800;
-            color: #00C2FF; /* Màu xanh biển chính */
+            color: #00C2FF;
             text-transform: uppercase;
             letter-spacing: -1px;
             transition: color 0.3s ease;
         }
         .logo:hover {
-            color: #0099CC; /* Màu xanh biển đậm hơn khi hover */
+            color: #0099CC;
+        }
+
+        /* Navigation links (now includes button styling) */
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem; /* Space between links/buttons */
+        }
+        .nav-links a, .nav-links button {
+            color: #e0e0e0;
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+            padding: 0.5rem 1rem; /* Added padding for button-like appearance */
+            border-radius: 0.5rem; /* Rounded corners for button-like appearance */
+            border: 1px solid transparent; /* Default transparent border */
+            background-color: transparent; /* Default transparent background */
+            cursor: pointer;
+        }
+        .nav-links a:hover, .nav-links button:hover {
+            color: #00C2FF;
+            border-color: #00C2FF; /* Border color on hover */
+            background-color: rgba(0, 194, 255, 0.1); /* Slight background on hover */
         }
 
         /* Language Selector */
@@ -660,7 +683,7 @@
             padding: 3rem 0;
             text-align: center;
             color: #888;
-            font-size: 0.9rem; /* Giảm kích thước font */
+            font-size: 0.9rem;
             border-top: 1px solid #1f1f1f;
         }
 
@@ -749,8 +772,8 @@
         }
 
         @media (max-width: 768px) {
-            nav ul {
-                display: none; /* Ẩn menu trên mobile, cần JS cho menu hamburger nếu muốn */
+            nav .nav-links {
+                display: none; /* Hide menu on mobile, need JS for hamburger menu if desired */
             }
             .logo {
                 font-size: 1.6rem; /* Điều chỉnh responsive */
@@ -800,6 +823,9 @@
         <div class="container">
             <nav>
                 <div class="logo">CrackHub</div>
+                <div class="nav-links">
+                    <button onclick="window.location.href='updatelog.html'">Nhật ký cập nhật</button>
+                </div>
                 <div class="language-selector flex items-center space-x-2">
                     <button id="lang-vi" class="lang-btn px-3 py-1 rounded-md font-semibold transition-colors duration-200">VI</button>
                     <button id="lang-en" class="lang-btn px-3 py-1 rounded-md font-semibold transition-colors duration-200">EN</button>
@@ -1078,6 +1104,7 @@
                         client.downloads = docSnap.data().count || 0;
                         console.log(`Đã tìm thấy lượt tải cho ${client.id}: ${client.downloads}`);
                     } else {
+                        // Initialize if not exists
                         await setDoc(docRef, { count: 0 });
                         client.downloads = 0;
                         console.log(`Khởi tạo lượt tải cho ${client.id}: 0`);
@@ -1113,7 +1140,7 @@
                 }
 
                 const newCount = currentCount + 1;
-                await setDoc(docRef, { count: newCount }, { merge: true });
+                await setDoc(docRef, { count: newCount }, { merge: true }); // Use merge to only update count field
                 
                 const clientIndex = clientsData.findIndex(c => c.id === clientId);
                 if (clientIndex !== -1) {
@@ -1162,12 +1189,7 @@
                 versionsSidebarTitle: 'Chọn phiên bản Rise Client',
                 versionsTabPlaceholder: 'Chọn phiên bản từ thanh bên phải.',
                 footerText1: '&copy; 2025 CrackHub. Tất cả quyền được bảo lưu.',
-                footerText2: 'Sức mạnh trong từng cú click.',
-                
-                // Full descriptions
-                'client-slinky-fullDescription': 'Slinky consists of various modules, each offering a unique feature or advantage. Each module has its own page on this website, explaining its purpose and configuration. The modules are categorized in the same way as the in-game menu.',
-                'client-augustus-fullDescription': 'Augustus Client là một standalone blatant PvP client cho Minecraft, chạy file riêng và tích hợp sẵn các module combat mạnh, hướng HVH và không giấu cheat.',
-                'client-rise-fullDescription': 'Rise Client là một trong những hack client mạnh mẽ nhất, nổi tiếng với các tính năng PvP và bypass anticheat hiệu quả. Tùy chỉnh phiên bản để phù hợp với nhu cầu của bạn.'
+                footerText2: 'Sức mạnh trong từng cú click.'
             },
             'en': {
                 heroTitle: 'CrackHub: Minecraft Client',
