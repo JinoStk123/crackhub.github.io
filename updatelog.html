@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrackHub - Nhật ký cập nhật</title>
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        /* Consistent base styles with index.html */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #121212; /* Nền cực tối, hơi xanh đen */
+            color: #e0e0e0; /* Chữ sáng dịu */
+            line-height: 1.6;
+            overflow-x: hidden; /* Ngăn cuộn ngang */
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Header */
+        header {
+            background-color: rgba(18, 18, 18, 0.8); /* Nền header hơi trong suốt */
+            backdrop-filter: blur(8px); /* Hiệu ứng blur */
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 2.0rem;
+            font-weight: 800;
+            color: #00C2FF;
+            text-transform: uppercase;
+            letter-spacing: -1px;
+            transition: color 0.3s ease;
+        }
+        .logo:hover {
+            color: #0099CC;
+        }
+
+        /* Hero Section for Update Log */
+        .hero-section {
+            background: linear-gradient(135deg, #1f1f1f 0%, #0a0a0a 100%);
+            min-height: 30vh; /* Shorter than main hero */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 4rem 1.5rem;
+            position: relative;
+            overflow: hidden;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: radial-gradient(#333 1px, transparent 1px);
+            background-size: 25px 25px;
+            opacity: 0.05;
+            z-index: 0;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            animation: fadeInScale 1.2s ease-out forwards;
+        }
+
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: scale(0.95) translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        .hero-section h1 {
+            font-size: 3.0rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1rem;
+            letter-spacing: -1px;
+            line-height: 1.1;
+            text-align: center;
+        }
+
+        /* Update Log Section */
+        .update-log-section {
+            background-color: #121212;
+            padding: 5rem 1.5rem;
+        }
+
+        .update-log-grid {
+            display: grid;
+            grid-template-columns: 1fr; /* Single column layout */
+            gap: 2.5rem;
+            max-width: 900px; /* Narrower for readability */
+            margin: 0 auto;
+        }
+
+        .update-log-card {
+            background-color: #1a1a1a;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+            border: 1px solid #2a2a2a;
+            transition: transform 0.6s ease-out, opacity 0.6s ease-out, box-shadow 0.3s ease, border-color 0.3s ease; /* Adjusted transition for smoother reveal/hide */
+            position: relative;
+            overflow: hidden;
+            /* Initial state: hidden below */
+            opacity: 0;
+            transform: translateY(50px);
+        }
+        /* Class when element has been revealed (comes into view from bottom) */
+        .update-log-card.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        /* Class when element has scrolled out of view upwards */
+        .update-log-card.hidden-above {
+            opacity: 0;
+            transform: translateY(-50px); /* Hidden above */
+        }
+
+        .update-log-card::before { /* Glow effect */
+            content: "";
+            position: absolute;
+            top: var(--y, 0);
+            left: var(--x, 0);
+            width: 250px;
+            height: 250px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(0, 194, 255, 0.15), transparent 70%);
+            pointer-events: none;
+            transition: opacity 0.3s ease, top 0.05s ease-out, left 0.05s ease-out;
+            opacity: 0;
+            z-index: 0;
+        }
+
+        .update-log-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.6);
+            border-color: #00C2FF;
+        }
+        .update-log-card:hover::before {
+            opacity: 1;
+        }
+
+        .update-log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #2a2a2a;
+            position: relative;
+            z-index: 1;
+        }
+
+        .update-log-version {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #00C2FF;
+        }
+
+        .update-log-date {
+            font-size: 0.95rem;
+            color: #aaa;
+        }
+
+        .update-log-changes ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .update-log-changes li {
+            font-size: 1.0rem;
+            color: #c0c0c0;
+            margin-bottom: 0.75rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        .update-log-changes li::before {
+            content: '•'; /* Bullet point */
+            color: #00C2FF;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+            font-size: 1.2em;
+            line-height: 1;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #0a0a0a;
+            padding: 3rem 0;
+            text-align: center;
+            color: #888;
+            font-size: 0.9rem;
+            border-top: 1px solid #1f1f1f;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2.2rem;
+            }
+            .update-log-card {
+                padding: 1.5rem;
+            }
+            .update-log-version {
+                font-size: 1.5rem;
+            }
+            .update-log-date {
+                font-size: 0.85rem;
+            }
+            .update-log-changes li {
+                font-size: 0.9rem;
+                padding-left: 1.2rem;
+            }
+            .update-log-changes li::before {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <a href="index.html" class="logo">CrackHub</a>
+                <!-- Language selector can be added here if needed for this page too -->
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section id="update-log-hero" class="hero-section">
+            <div class="hero-content">
+                <h1>Nhật ký cập nhật</h1>
+            </div>
+        </section>
+
+        <section class="update-log-section">
+            <div class="container">
+                <div id="updateLogGrid" class="update-log-grid">
+                    <!-- Update log entries will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 CrackHub. Tất cả quyền được bảo bảo lưu.</p>
+            <p>Sức mạnh trong từng cú click.</p>
+        </div>
+    </footer>
+
+    <script>
+        const updateLogData = [
+            {
+                version: '1.0.4',
+                date: '05/07/2025',
+                changes: [
+                    'Đã loại bỏ thanh cuộn gây khó chịu trong box chọn phiên bản Rise Client.',
+                    'Cải thiện hiệu suất hiển thị tổng thể.'
+                ]
+            },
+            {
+                version: '1.0.3',
+                date: '04/07/2025',
+                changes: [
+                    'Đã khắc phục lỗi `TypeError: Cannot set properties of null` khi cập nhật ngôn ngữ.',
+                    'Tối ưu hóa mã JavaScript để tránh lỗi khi các phần tử DOM không tồn tại.'
+                ]
+            },
+            {
+                version: '1.0.2',
+                date: '03/07/2025',
+                changes: [
+                    'Mật khẩu giải nén đã được di chuyển về tab "Chi tiết" trong modal chính để dễ dàng truy cập hơn.',
+                    'Cải thiện trải nghiệm người dùng khi xem thông tin client.'
+                ]
+            },
+            {
+                version: '1.0.1',
+                date: '02/07/2025',
+                changes: [
+                    'Đã loại bỏ nút bật/tắt trong box chọn phiên bản Rise Client, giúp các phiên bản luôn hiển thị.',
+                    'Cải thiện luồng chọn phiên bản cho người dùng.'
+                ]
+            },
+            {
+                version: '1.0.0',
+                date: '01/07/2025',
+                changes: [
+                    'Ra mắt CrackHub với giao diện hiện đại, tối giản.',
+                    'Tính năng xem chi tiết client và tải xuống.',
+                    'Hệ thống đếm lượt tải tích hợp Firebase.',
+                    'Hỗ trợ đa ngôn ngữ (Tiếng Việt và Tiếng Anh).'
+                ]
+            }
+        ];
+
+        const updateLogGrid = document.getElementById('updateLogGrid');
+
+        function renderUpdateLog() {
+            updateLogGrid.innerHTML = '';
+            updateLogData.forEach(log => {
+                const logCard = document.createElement('div');
+                logCard.className = 'update-log-card';
+                
+                const changesList = log.changes.map(change => `<li>${change}</li>`).join('');
+
+                logCard.innerHTML = `
+                    <div class="update-log-header">
+                        <span class="update-log-version">v${log.version}</span>
+                        <span class="update-log-date">${log.date}</span>
+                    </div>
+                    <div class="update-log-changes">
+                        <ul>
+                            ${changesList}
+                        </ul>
+                    </div>
+                `;
+                updateLogGrid.appendChild(logCard);
+
+                // Add mousemove for glow effect
+                logCard.addEventListener("mousemove", e => {
+                    const rect = logCard.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const y = e.clientY - rect.top;
+                    logCard.style.setProperty('--x', `${x}px`);
+                    logCard.style.setProperty('--y', `${y}px`);
+                });
+            });
+            observeUpdateLogCards(); // Apply scroll reveal after rendering
+        }
+
+        // --- Scroll Reveal for Update Log Cards ---
+        const observerOptions = {
+            root: null, // viewport
+            rootMargin: '0px',
+            threshold: 0.1 // 10% of the element must be visible
+        };
+
+        const updateLogCardObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Element is entering the viewport
+                    entry.target.classList.add('revealed');
+                    entry.target.classList.remove('hidden-above'); // Remove hidden-above if it was there
+                } else {
+                    // Element is leaving the viewport
+                    if (entry.boundingClientRect.top < 0) {
+                        // Element has scrolled above the viewport
+                        entry.target.classList.add('hidden-above');
+                        entry.target.classList.remove('revealed'); // Remove revealed if it was there
+                    } else {
+                        // Element has scrolled below the viewport
+                        entry.target.classList.remove('revealed');
+                        entry.target.classList.remove('hidden-above'); // Ensure it's not hidden-above
+                    }
+                }
+            });
+        }, observerOptions);
+
+        function observeUpdateLogCards() {
+            const cards = document.querySelectorAll('.update-log-card');
+            cards.forEach(card => {
+                updateLogCardObserver.observe(card);
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderUpdateLog();
+        });
+    </script>
+</body>
+</html>
