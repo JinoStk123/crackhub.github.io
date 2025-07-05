@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CrackHub - Crack Minecraft Cheater</title>
+    <title>CrackHub</title>
     <!-- Favicon -->
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
     
@@ -53,6 +53,22 @@
         }
         .logo:hover {
             color: #0099CC; /* Màu xanh biển đậm hơn khi hover */
+        }
+
+        /* Language Selector */
+        .language-selector .lang-btn {
+            background-color: #333;
+            color: #bbb;
+            border: 1px solid #444;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+        .language-selector .lang-btn.active, .language-selector .lang-btn:hover {
+            background-color: #00C2FF;
+            color: white;
+            border-color: #00C2FF;
         }
 
         /* Hero Section */
@@ -279,15 +295,15 @@
             transform: translateY(-2px);
         }
 
-        /* Client Detail Modal - Frosted Glass UI + Hover Glow */
+        /* Modal Overlay - Full screen, semi-transparent background */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7); /* Nền overlay hơi trong suốt */
-            display: flex;
+            background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+            display: flex; /* Use flex to center the main modal */
             justify-content: center;
             align-items: center;
             z-index: 2000;
@@ -301,47 +317,50 @@
             visibility: visible;
         }
 
+        /* Main Modal Content - Centered, traditional modal style */
         .modal-content {
-            position: relative; /* Cần để pseudo-element ::before hoạt động */
-            background-color: rgba(26, 26, 26, 0.85); /* Nền modal mờ và trong suốt */
-            backdrop-filter: blur(15px); /* Hiệu ứng kính mờ (frosted glass) */
-            -webkit-backdrop-filter: blur(15px); /* Hỗ trợ Safari */
-            border-radius: 1rem; /* Bo tròn viền cho modal */
-            max-width: 900px;
+            position: relative; /* For glow effect */
+            background-color: rgba(26, 26, 26, 0.85); /* Frosted glass background */
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border-radius: 1rem;
+            max-width: 900px; /* Max width for central modal */
             width: 90%;
-            max-height: 90vh; /* Giới hạn chiều cao */
-            overflow-y: auto; /* Cho phép cuộn nếu nội dung dài */
+            max-height: 90vh;
             padding: 2.5rem;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
-            transform: translateY(20px);
+            transform: translateY(20px); /* Slide up effect */
             transition: transform 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1); /* Viền nhẹ để làm nổi bật hiệu ứng kính */
-            overflow: hidden; /* Quan trọng để glow không bị tràn ra ngoài */
-        }
-        /* Hiệu ứng glow vùng con trỏ cho modal content */
-        .modal-content::before {
-            content: "";
-            position: absolute;
-            top: var(--modal-y, 0);
-            left: var(--modal-x, 0);
-            width: 450px; /* Kích thước vùng glow LỚN HƠN cho modal */
-            height: 450px; /* Kích thước vùng glow LỚN HƠN cho modal */
-            transform: translate(-50%, -50%);
-            background: radial-gradient(circle, rgba(0, 194, 255, 0.2), transparent 70%);
-            pointer-events: none;
-            transition: opacity 0.3s ease, top 0.05s ease-out, left 0.05s ease-out;
-            opacity: 0; /* Ẩn ban đầu */
-            z-index: 0; /* Đảm bảo ở dưới nội dung */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            overflow: hidden; /* For glow */
+            display: flex;
+            flex-direction: column;
+            z-index: 2001; /* Higher than overlay */
         }
 
         .modal-overlay.active .modal-content {
             transform: translateY(0);
         }
-        /* Hiện glow khi hover vào modal */
+
+        /* Glow effect for modal content */
+        .modal-content::before {
+            content: "";
+            position: absolute;
+            top: var(--modal-y, 0);
+            left: var(--modal-x, 0);
+            width: 450px;
+            height: 450px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(0, 194, 255, 0.2), transparent 70%);
+            pointer-events: none;
+            transition: opacity 0.3s ease, top 0.05s ease-out, left 0.05s ease-out;
+            opacity: 0;
+            z-index: 0;
+        }
+
         .modal-content:hover::before {
             opacity: 1;
         }
-
 
         .modal-close-btn {
             position: absolute;
@@ -349,11 +368,11 @@
             right: 1.5rem;
             background: none;
             border: none;
-            font-size: 1.6rem; /* Giảm kích thước font */
+            font-size: 1.6rem;
             color: #aaa;
             cursor: pointer;
             transition: color 0.2s ease;
-            z-index: 1; /* Đảm bảo nút close nằm trên glow */
+            z-index: 1;
         }
         .modal-close-btn:hover {
             color: white;
@@ -366,48 +385,99 @@
             margin-bottom: 2rem;
             border-bottom: 1px solid #2a2a2a;
             padding-bottom: 1.5rem;
-            position: relative; /* Cần để z-index hoạt động */
-            z-index: 1; /* Đảm bảo nội dung header nằm trên glow */
+            position: relative;
+            z-index: 1;
         }
 
         .modal-image {
             width: 200px;
             height: 200px;
             object-fit: cover;
-            border-radius: 0.75rem; /* Bo tròn viền cho ảnh trong modal */
+            border-radius: 0.75rem;
             border: 1px solid #3a3a3a;
         }
 
         .modal-title-group h3 {
-            font-size: 2.0rem; /* Giảm kích thước font */
+            font-size: 2.0rem;
             font-weight: 800;
             color: white;
             margin-bottom: 0.5rem;
         }
 
         .modal-info {
-            font-size: 1.0rem; /* Giảm kích thước font */
+            font-size: 1.0rem;
             color: #bbb;
             display: flex;
             gap: 1.5rem;
         }
         .modal-info span i {
             margin-right: 0.5rem;
-            color: #00C2FF; /* Màu xanh biển chính */
+            color: #00C2FF;
         }
 
-        /* New style for file password display */
+        /* Tab Navigation Styles */
+        .tab-navigation {
+            display: flex;
+            border-bottom: 1px solid #2a2a2a;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+        }
+
+        .tab-button {
+            background-color: transparent;
+            border: none;
+            color: #aaa;
+            padding: 0.75rem 1.25rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 2px solid transparent;
+        }
+
+        .tab-button:hover {
+            color: #e0e0e0;
+        }
+
+        .tab-button.active {
+            color: #00C2FF;
+            border-bottom-color: #00C2FF;
+        }
+
+        .tab-content-wrapper {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding-bottom: 1rem;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .modal-description {
+            font-size: 1.0rem;
+            color: #c0c0c0;
+            margin-bottom: 1.5rem;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* File password display (now in main modal) */
         .modal-file-password {
-            font-size: 1.05rem; /* Giảm kích thước font */
-            color: #FFD700; /* Màu vàng nổi bật */
+            font-size: 1.05rem;
+            color: #FFD700;
             font-weight: 700;
             margin-top: 1.5rem;
             margin-bottom: 1.5rem;
             padding: 0.75rem 1.25rem;
-            background-color: rgba(255, 215, 0, 0.1); /* Nền hơi vàng nhạt */
+            background-color: rgba(255, 215, 0, 0.1);
             border: 1px solid rgba(255, 215, 0, 0.3);
-            border-radius: 0.5rem; /* Bo tròn viền cho mật khẩu file */
-            display: inline-block; /* Để padding và border không chiếm hết chiều rộng */
+            border-radius: 0.5rem;
+            display: inline-block;
             position: relative;
             z-index: 1;
         }
@@ -416,52 +486,12 @@
             color: #FFD700;
         }
 
-        /* New style for version selector */
-        .modal-version-selector {
-            margin-top: 1.5rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .modal-version-selector label {
-            font-size: 1.0rem;
-            color: #e0e0e0;
-            font-weight: 600;
-            margin-right: 1rem;
-        }
-
-        .modal-version-selector select {
-            background-color: #1a1a1a;
-            border: 1px solid #00C2FF;
-            color: #e0e0e0;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 1.0rem;
-            outline: none;
-            transition: border-color 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .modal-version-selector select:focus {
-            border-color: #0099CC;
-            box-shadow: 0 0 8px rgba(0, 194, 255, 0.4);
-        }
-
-        .modal-description {
-            font-size: 1.0rem; /* Giảm kích thước font */
-            color: #c0c0c0;
-            margin-bottom: 1.5rem; /* Giảm margin-bottom để password nằm gần hơn */
-            text-align: left;
-            position: relative;
-            z-index: 1; /* Đảm bảo nội dung nằm trên glow */
-        }
-
         .modal-download-btn {
-            background-color: #00C2FF; /* Màu xanh biển chính */
+            background-color: #00C2FF;
             color: white;
-            padding: 0.8rem 2.0rem; /* Giảm padding */
-            border-radius: 9999px; /* Bo tròn viền cho nút tải xuống trong modal */
-            font-size: 1.05rem; /* Giảm kích thước font */
+            padding: 0.8rem 2.0rem;
+            border-radius: 9999px;
+            font-size: 1.05rem;
             font-weight: 700;
             text-decoration: none;
             transition: background-color 0.3s ease, transform 0.2s ease;
@@ -469,13 +499,200 @@
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            position: relative; /* Cần để z-index hoạt động */
-            z-index: 1; /* Đảm bảo nút nằm trên glow */
+            position: relative;
+            z-index: 1;
         }
 
         .modal-download-btn:hover {
-            background-color: #0099CC; /* Màu xanh biển đậm hơn khi hover */
+            background-color: #0099CC;
             transform: translateY(-3px);
+        }
+
+        /* NEW: Detached Versions Modal (formerly sidebar) */
+        .versions-sidebar-modal { /* Renamed from versions-sidebar-modal for clarity, but keeping the class name for minimal changes */
+            position: fixed; /* Keep fixed to float above content */
+            top: 50%; /* Center vertically */
+            left: 50%; /* Center horizontally */
+            transform: translate(-50%, -50%) scale(0.9); /* Initial scale for pop-in effect */
+            width: 450px; /* Fixed width for the box */
+            max-width: 90%; /* Ensure it doesn't get too wide on smaller screens */
+            height: auto; /* Content-driven height */
+            max-height: 90vh; /* Max height for scrollability */
+            padding: 2.5rem;
+            background-color: rgba(26, 26, 26, 0.95); /* Frosted glass background */
+            backdrop-filter: blur(20px); /* Stronger blur */
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 1rem; /* Fully rounded corners */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7); /* General shadow */
+            border: 1px solid rgba(255, 255, 255, 0.1); /* Light border */
+            overflow-y: auto; /* Allow scrolling within the modal */
+            display: flex;
+            flex-direction: column;
+            z-index: 2005; /* Higher z-index than main modal */
+            visibility: hidden; /* Hidden by default */
+            opacity: 0; /* Hidden by default */
+            transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease; /* Simpler transition */
+        }
+
+        .versions-sidebar-modal.active {
+            transform: translate(-50%, -50%) scale(1); /* Pop into view and center */
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Glow effect for versions sidebar modal */
+        .versions-sidebar-modal::before {
+            content: "";
+            position: absolute;
+            top: var(--sidebar-y, 0); /* Use new custom properties for sidebar glow */
+            left: var(--sidebar-x, 0);
+            width: 450px;
+            height: 450px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(0, 194, 255, 0.2), transparent 70%);
+            pointer-events: none;
+            transition: opacity 0.3s ease, top 0.05s ease-out, left 0.05s ease-out;
+            opacity: 0;
+            z-index: 0;
+        }
+
+        .versions-sidebar-modal:hover::before {
+            opacity: 1;
+        }
+
+        /* Close button for sidebar modal */
+        #closeVersionsSidebarBtn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1.6rem;
+            color: #aaa;
+            cursor: pointer;
+            transition: color 0.2s ease;
+            z-index: 1;
+        }
+        #closeVersionsSidebarBtn:hover {
+            color: white;
+        }
+
+        /* Version Selector Toggle Section (within sidebar) */
+        .version-selector-container {
+            background-color: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden; /* For glow effect */
+            transition: all 0.3s ease;
+        }
+
+        .version-selector-container::before {
+            content: "";
+            position: absolute;
+            top: var(--toggle-y, 0);
+            left: var(--toggle-x, 0);
+            width: 200px; /* Smaller glow for this section */
+            height: 200px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(0, 194, 255, 0.15), transparent 70%);
+            pointer-events: none;
+            transition: opacity 0.3s ease, top 0.05s ease-out, left 0.05s ease-out;
+            opacity: 0; /* Hidden by default */
+            z-index: 0;
+        }
+
+        .version-selector-container:hover::before {
+            opacity: 1; /* Show glow on hover */
+        }
+        
+        .version-selector-container.open {
+            border-color: #00C2FF; /* Border glow when open */
+            box-shadow: 0 4px 20px rgba(0, 194, 255, 0.3); /* Shadow glow when open */
+        }
+        .version-selector-container.open::before {
+             opacity: 1; /* Always show glow when open */
+        }
+
+        .toggle-button {
+            background-color: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            color: #e0e0e0;
+            cursor: pointer;
+            outline: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            width: 100%; /* Full width for the button */
+            text-align: left; /* Align text to left */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .toggle-button:hover {
+            background-color: #3a3a3a;
+            border-color: #00C2FF;
+        }
+
+        .toggle-icon {
+            transform: rotate(0deg);
+            transition: transform 0.2s ease;
+        }
+
+        .version-selector-container.open .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .version-selector-content {
+            max-height: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: max-height 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
+        }
+
+        .version-selector-container.open .version-selector-content {
+            max-height: 200px; /* Adjust based on expected content height */
+            opacity: 1;
+            visibility: visible;
+            padding-top: 1rem; /* Add padding when open */
+        }
+
+        /* NEW: Styles for version buttons (replacing select options) */
+        .version-buttons-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem; /* Space between buttons */
+            justify-content: center; /* Center buttons */
+        }
+
+        .version-button {
+            background-color: #3a3a3a;
+            color: #e0e0e0;
+            padding: 0.6rem 1.2rem;
+            border-radius: 0.5rem;
+            font-size: 0.95rem;
+            font-weight: 600;
+            border: 1px solid #4a4a4a;
+            cursor: pointer;
+            transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+            min-width: 80px; /* Minimum width for buttons */
+            text-align: center;
+        }
+
+        .version-button:hover {
+            background-color: #4a4a4a;
+            border-color: #00C2FF;
+            transform: translateY(-2px);
+        }
+
+        .version-button.active {
+            background-color: #00C2FF;
+            color: white;
+            border-color: #00C2FF;
+            box-shadow: 0 0 10px rgba(0, 194, 255, 0.5);
+            transform: translateY(-1px);
         }
 
         /* Footer */
@@ -552,6 +769,24 @@
                 flex-wrap: wrap;
                 gap: 1rem;
             }
+            /* On smaller screens, the versions sidebar modal should behave more like a full-width modal */
+            .versions-sidebar-modal {
+                width: 95%; /* Take more width on mobile */
+                border-radius: 1rem; /* Full rounded corners on mobile */
+                left: 50%; /* Center horizontally */
+                transform: translateX(-50%) translateY(100%); /* Slide from bottom */
+                top: auto; /* Reset top */
+                bottom: 0; /* Align to bottom */
+                height: auto; /* Content-driven height */
+                max-height: 90vh; /* Max height for scrollability */
+            }
+            .versions-sidebar-modal.active {
+                transform: translateX(-50%) translateY(0); /* Slide up */
+            }
+            #closeVersionsSidebarBtn {
+                top: 1rem;
+                right: 1rem;
+            }
         }
 
         @media (max-width: 768px) {
@@ -606,6 +841,10 @@
         <div class="container">
             <nav>
                 <div class="logo">CrackHub</div>
+                <div class="language-selector flex items-center space-x-2">
+                    <button id="lang-vi" class="lang-btn px-3 py-1 rounded-md font-semibold transition-colors duration-200">VI</button>
+                    <button id="lang-en" class="lang-btn px-3 py-1 rounded-md font-semibold transition-colors duration-200">EN</button>
+                </div>
             </nav>
         </div>
     </header>
@@ -613,26 +852,27 @@
     <main>
         <section id="hero" class="hero-section">
             <div class="hero-content">
-                <h1>CrackHub: Giải Phóng Sức Mạnh Hack Client Của Bạn</h1>
-                <p style="margin-left: auto; margin-right: auto;">Khám phá bộ sưu tập hack client Minecraft đỉnh cao, giúp bạn thống trị mọi trận đấu và trải nghiệm game không giới hạn.</p>
+                <h1 data-key="heroTitle">CrackHub: Client Minecraft</h1>
+                <p style="margin-left: auto; margin-right: auto;" data-key="heroDescription">Khám phá bộ sưu tập hack client Minecraft đỉnh cao, giúp bạn thống trị mọi trận đấu và trải nghiệm game không giới hạn.</p>
                 <a href="#browse-clients" class="btn-primary flex items-center justify-center gap-2">
-                    <i class="fas fa-arrow-down"></i> Bắt Đầu Khám Phá
+                    <i class="fas fa-arrow-down"></i> <span data-key="exploreButton">Bắt Đầu Khám Phá</span>
                 </a>
             </div>
         </section>
 
         <section class="client-grid-section" id="browse-clients">
             <div class="container">
-                <h2 class="text-4xl font-extrabold text-white mb-10">Thư Viện Client</h2>
+                <h2 class="text-4xl font-extrabold text-white mb-10" data-key="libraryTitle">Thư Viện Client</h2>
                 <div id="clientGrid" class="client-grid">
                 </div>
-                <div id="noResults" class="text-center text-gray-500 text-lg mt-10 hidden">
+                <div id="noResults" class="text-center text-gray-500 text-lg mt-10 hidden" data-key="noResults">
                     Không tìm thấy client nào phù hợp với yêu cầu của bạn.
                 </div>
             </div>
         </section>
     </main>
 
+    <!-- Main Client Detail Modal (Centered) -->
     <div id="clientDetailModal" class="modal-overlay">
         <div class="modal-content">
             <button class="modal-close-btn" id="closeModalBtn">&times;</button>
@@ -641,36 +881,57 @@
                 <div class="modal-title-group">
                     <h3 id="modalClientName">Tên Client</h3>
                     <div class="modal-info">
-                        <span><i class="fas fa-gamepad"></i> Phiên bản: <span id="modalClientVersion">N/A</span></span>
-                        <span><i class="fas fa-download"></i> Lượt tải: <span id="modalClientDownloads">0</span></span>
-                        <span><i class="fas fa-tag"></i> Loại: <span id="modalClientType">N/A</span></span>
+                        <span><i class="fas fa-gamepad"></i> <span data-key="modalVersionLabel">Phiên bản:</span> <span id="modalClientVersion">N/A</span></span>
+                        <span><i class="fas fa-download"></i> <span data-key="modalDownloadsLabel">Lượt tải:</span> <span id="modalClientDownloads">0</span></span>
+                        <span><i class="fas fa-tag"></i> <span data-key="modalTypeLabel">Loại:</span> <span id="modalClientType">N/A</span></span>
                     </div>
                 </div>
             </div>
-            <p id="modalClientDescription" class="modal-description">Mô tả chi tiết client.</p>
-            
-            <!-- New version selector for Rise Client only -->
-            <div id="modalVersionSelector" class="modal-version-selector hidden">
-                <label for="riseVersionSelect">Chọn phiên bản:</label>
-                <select id="riseVersionSelect">
-                    <!-- Options will be populated by JavaScript -->
-                </select>
+            <!-- Tab Navigation for Main Modal -->
+            <div class="tab-navigation">
+                <button class="tab-button" data-tab="details" data-key="tabDetails">Chi tiết</button>
+                <!-- Versions tab button is now only a trigger for the sidebar, not a content tab -->
+                <button class="tab-button hidden" data-tab="versions" data-key="tabVersions" id="versionsTabButton">Phiên bản</button>
             </div>
 
-            <!-- File password display -->
-            <p id="modalFilePassword" class="modal-file-password hidden">
-                <i class="fas fa-key"></i> Mật khẩu giải nén: <span id="filePasswordValue"></span>
-            </p>
-            <a id="modalDownloadLink" href="#" target="_blank" class="modal-download-btn">
-                <i class="fas fa-cloud-download-alt"></i> Tải Xuống Ngay
-            </a>
+            <!-- Tab Content Wrapper for Main Modal (only details content here) -->
+            <div class="tab-content-wrapper flex-grow overflow-y-auto">
+                <div id="tab-details" class="tab-content active">
+                    <p id="modalClientDescription" class="modal-description"></p>
+                    <!-- File password display (now in main modal) -->
+                    <p id="modalFilePassword" class="modal-file-password hidden">
+                        <i class="fas fa-key"></i> <span data-key="modalFilePasswordLabel">Mật khẩu giải nén:</span> <span id="filePasswordValue"></span>
+                    </p>
+                    <a id="modalDownloadLink" href="#" target="_blank" class="modal-download-btn">
+                        <i class="fas fa-cloud-download-alt"></i> <span data-key="modalDownloadButton">Tải Xuống Ngay</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- NEW: Detached Versions Modal -->
+        <div id="versionsSidebarModal" class="versions-sidebar-modal">
+            <button class="modal-close-btn" id="closeVersionsSidebarBtn">&times;</button>
+            <h3 class="text-xl font-bold text-white mb-4" data-key="versionsSidebarTitle">Chọn phiên bản Rise Client</h3>
+            <!-- Version Selector Toggle Section -->
+            <div id="versionSelectorContainer" class="version-selector-container mb-4">
+                <button id="toggleVersionSelector" class="toggle-button">
+                    <span data-key="modalSelectVersion">Chọn phiên bản:</span>
+                    <i class="fas fa-chevron-down toggle-icon"></i>
+                </button>
+                <div id="versionSelectorContent" class="version-selector-content">
+                    <div id="riseVersionButtons" class="version-buttons-container">
+                        <!-- Version buttons will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
     <footer>
         <div class="container">
-            <p>&copy; 2025 CrackHub. Tất cả quyền được bảo lưu.</p>
-            <p>Sức mạnh trong từng cú click.</p>
+            <p data-key="footerText1">&copy; 2025 CrackHub. Tất cả quyền được bảo lưu.</p>
+            <p data-key="footerText2">Sức mạnh trong từng cú click.</p>
         </div>
     </footer>
 
@@ -751,8 +1012,14 @@
                 version: '1.7.10 - 1.8.9',
                 downloads: 0, // Sẽ được cập nhật từ Firestore
                 type: 'Ghost',
-                shortDescription: 'Cre: mrnv & o',
-                fullDescription: 'Slinky consists of various modules, each offering a unique feature or advantage. Each module has its own page on this website, explaining its purpose and configuration. The modules are categorized in the same way as the in-game menu.',
+                shortDescription: {
+                    vi: 'Cre: mrnv & o',
+                    en: 'Cre: mrnv & o'
+                },
+                fullDescription: {
+                    vi: 'Slinky consists of various modules, each offering a unique feature or advantage. Each module has its own page on this website, explaining its purpose and configuration. The modules are categorized in the same way as the in-game menu.',
+                    en: 'Slinky consists of various modules, each offering a unique feature or advantage. Each module has its own page on this website, explaining its purpose and configuration. The modules are categorized in the same way as the in-game menu.'
+                },
                 filePassword: 'CrackHub', // Mật khẩu giải nén file riêng biệt
                 downloadLink: 'https://mega.nz/file/ag4WBJrK#SPp0TGkSXPxN1xPIZGjgZo-zMbHIMdrE8B0A0RYkIRI'
             },
@@ -763,8 +1030,14 @@
                 version: '1.8.9',
                 downloads: 0, // Sẽ được cập nhật từ Firestore
                 type: 'Blatant',
-                shortDescription: 'Cre: @NESPOLAONTOPS', // Cập nhật creator
-                fullDescription: 'Augustus Client là một standalone blatant PvP client cho Minecraft, chạy file riêng và tích hợp sẵn các module combat mạnh, hướng HVH và không giấu cheat.',
+                shortDescription: {
+                    vi: 'Cre: @NESPOLAONTOPS',
+                    en: 'Cre: @NESPOLAONTOPS'
+                },
+                fullDescription: {
+                    vi: 'Augustus Client là một standalone blatant PvP client cho Minecraft, chạy file riêng và tích hợp sẵn các module combat mạnh, hướng HVH và không giấu cheat.',
+                    en: 'Augustus Client is a standalone blatant PvP client for Minecraft, running its own files and integrating powerful combat modules, focusing on HVH (Hacker vs Hacker) and not hiding cheats.'
+                },
                 filePassword: 'CrackHub', // Mật khẩu giải nén file riêng biệt
                 downloadLink: 'https://mega.nz/file/SkoniTYS#Hi-OsX3QJlwctKWt_yJt3aflMF6S3QkgMLoyWyJW9mc'
             },
@@ -775,8 +1048,14 @@
                 version: '1.8.9', // Phiên bản hiển thị trên card
                 downloads: 0,
                 type: 'Blatant',
-                shortDescription: 'Cre: @NESPOLAONTOPS', // Cập nhật creator
-                fullDescription: 'Rise Client là một trong những hack client mạnh mẽ nhất, nổi tiếng với các tính năng PvP và bypass anticheat hiệu quả. Tùy chỉnh phiên bản để phù hợp với nhu cầu của bạn.',
+                shortDescription: {
+                    vi: 'Cre: @NESPOLAONTOPS',
+                    en: 'Cre: @NESPOLAONTOPS'
+                },
+                fullDescription: {
+                    vi: 'Rise Client là một trong những hack client mạnh mẽ nhất, nổi tiếng với các tính năng PvP và bypass anticheat hiệu quả. Tùy chỉnh phiên bản để phù hợp với nhu cầu của bạn.',
+                    en: 'Rise Client is một trong những hack client mạnh mẽ nhất, nổi tiếng với các tính năng PvP và bypass anticheat hiệu quả. Tùy chỉnh phiên bản để phù hợp với nhu cầu của bạn.'
+                },
                 filePassword: 'CrackHub',
                 // downloadLink: 'https://mega.nz/file/Ph4USBrI#xn20a7f0zFW4kCq2BeNobalHe_5mlKfJJ6rxO3HgcCQ', // Không dùng link chung nữa
                 versionsAvailable: [ // Cập nhật các phiên bản có sẵn và link tải riêng
@@ -791,28 +1070,39 @@
         // DOM Elements
         const clientGrid = document.getElementById('clientGrid');
         const noResultsMessage = document.getElementById('noResults');
-        const clientDetailModal = document.getElementById('clientDetailModal');
-        const closeModalBtn = document.getElementById('closeModalBtn');
+        const clientDetailModal = document.getElementById('clientDetailModal'); // Main modal overlay
+        const closeModalBtn = document.getElementById('closeModalBtn'); // Close button for main modal
         const modalClientImage = document.getElementById('modalClientImage');
         const modalClientName = document.getElementById('modalClientName');
         const modalClientVersion = document.getElementById('modalClientVersion');
         const modalClientDownloads = document.getElementById('modalClientDownloads');
         const modalClientType = document.getElementById('modalClientType');
         const modalClientDescription = document.getElementById('modalClientDescription');
-        const modalFilePassword = document.getElementById('modalFilePassword'); // New element
-        const filePasswordValue = document.getElementById('filePasswordValue'); // New element
+        const modalFilePassword = document.getElementById('modalFilePassword'); // Moved to main modal
+        const filePasswordValue = document.getElementById('filePasswordValue'); // Moved to main modal
         const modalDownloadLink = document.getElementById('modalDownloadLink');
         const heroSection = document.getElementById('hero');
         const heroContent = document.querySelector('.hero-content');
         const loadingOverlay = document.getElementById('loadingOverlay');
-        const modalVersionSelector = document.getElementById('modalVersionSelector'); // New element
-        const riseVersionSelect = document.getElementById('riseVersionSelect'); // New element
+        
+        // Tab elements for main modal
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const versionsTabButton = document.getElementById('versionsTabButton'); // Versions tab button in main modal
+
+        // Elements for the NEW detached versions modal
+        const versionsSidebarModal = document.getElementById('versionsSidebarModal');
+        const closeVersionsSidebarBtn = document.getElementById('closeVersionsSidebarBtn'); // Close button for sidebar modal
+        const versionSelectorContainer = document.getElementById('versionSelectorContainer'); // Container for toggle
+        const toggleVersionSelector = document.getElementById('toggleVersionSelector'); // Toggle button
+        const versionSelectorContent = document.getElementById('versionSelectorContent'); // Content to be toggled
+        const riseVersionButtons = document.getElementById('riseVersionButtons'); // Changed from select to div for buttons
+
 
         // --- Firebase Download Count Logic ---
         async function loadAllClientDownloadCounts() {
             if (!db) {
                 console.error("Firestore chưa được khởi tạo. Không thể tải số lượt tải.");
-                // Hiển thị lỗi trên UI
                 const errorMessageElement = document.getElementById('noResults');
                 if (errorMessageElement) {
                     errorMessageElement.classList.remove('hidden');
@@ -823,8 +1113,6 @@
             showLoading();
             try {
                 for (const client of clientsData) {
-                    // Đường dẫn Firestore cần khớp với quy tắc bảo mật của bạn.
-                    // Ví dụ: artifacts/crackhub-c1adf/public/data/clientDownloads/client-slinky
                     const docPath = `artifacts/${currentAppId}/public/data/clientDownloads/${client.id}`;
                     console.log(`Đang cố gắng tải tài liệu Firestore từ đường dẫn: ${docPath}`);
                     const docRef = doc(db, docPath);
@@ -834,23 +1122,21 @@
                         client.downloads = docSnap.data().count || 0;
                         console.log(`Đã tìm thấy lượt tải cho ${client.id}: ${client.downloads}`);
                     } else {
-                        // Khởi tạo nếu chưa tồn tại
                         await setDoc(docRef, { count: 0 });
                         client.downloads = 0;
                         console.log(`Khởi tạo lượt tải cho ${client.id}: 0`);
                     }
                 }
-                renderClients(clientsData); // Render clients với số lượt tải đã cập nhật
+                renderClients(clientsData);
             } catch (error) {
                     console.error("LỖI TẢI LƯỢT TẢI CLIENT TỪ FIRESTORE:", error);
-                    // Hiển thị thông báo lỗi thân thiện hơn trên UI
                     const errorMessageElement = document.getElementById('noResults');
                     if (errorMessageElement) {
                         errorMessageElement.classList.remove('hidden');
                         errorMessageElement.textContent = `Lỗi tải dữ liệu client: ${error.message}. Vui lòng kiểm tra quy tắc bảo mật Firestore của bạn và đảm bảo database đã được tạo.`;
                     }
-                    clientsData.forEach(client => client.downloads = "Lỗi"); // Fallback
-                    renderClients(clientsData); // Vẫn cố gắng render với dữ liệu lỗi
+                    clientsData.forEach(client => client.downloads = "Lỗi");
+                    renderClients(clientsData);
             } finally {
                 hideLoading();
             }
@@ -871,18 +1157,15 @@
                 }
 
                 const newCount = currentCount + 1;
-                await setDoc(docRef, { count: newCount }, { merge: true }); // Use merge to only update count field
+                await setDoc(docRef, { count: newCount }, { merge: true });
                 
-                // Update the client data in memory and re-render the specific card/modal
                 const clientIndex = clientsData.findIndex(c => c.id === clientId);
                 if (clientIndex !== -1) {
                     clientsData[clientIndex].downloads = newCount;
-                    // Find and update the specific card's download count
                     const cardElement = document.querySelector(`.client-card[data-client-id="${clientId}"] .download-count`);
                     if (cardElement) {
                         cardElement.textContent = newCount;
                     }
-                    // Update modal download count if it's open for this client
                     if (clientDetailModal.classList.contains('active') && modalClientName.textContent === clientsData[clientIndex].name) {
                         modalClientDownloads.textContent = newCount;
                     }
@@ -902,15 +1185,108 @@
             loadingOverlay.classList.remove('active');
         }
 
+        // --- Translations ---
+        const translations = {
+            'vi': {
+                heroTitle: 'CrackHub: Client Minecraft',
+                heroDescription: 'Khám phá bộ sưu tập hack client Minecraft đỉnh cao, giúp bạn thống trị mọi trận đấu và trải nghiệm game không giới hạn.',
+                exploreButton: 'Bắt Đầu Khám Phá',
+                libraryTitle: 'Thư Viện Client',
+                noResults: 'Không tìm thấy client nào phù hợp với yêu cầu của bạn.',
+                detailButton: 'Chi tiết',
+                modalVersionLabel: 'Phiên bản:',
+                modalDownloadsLabel: 'Lượt tải:',
+                modalTypeLabel: 'Loại:',
+                modalFilePasswordLabel: 'Mật khẩu giải nén:',
+                modalFilePasswordNone: 'Không có',
+                modalDownloadButton: 'Tải Xuống Ngay',
+                modalSelectVersion: 'Chọn phiên bản:',
+                tabDetails: 'Chi tiết',
+                tabVersions: 'Phiên bản',
+                versionsSidebarTitle: 'Chọn phiên bản Rise Client',
+                versionsTabPlaceholder: 'Chọn phiên bản từ thanh bên phải.',
+                footerText1: '&copy; 2025 CrackHub. Tất cả quyền được bảo lưu.',
+                footerText2: 'Sức mạnh trong từng cú click.',
+                
+                // Full descriptions
+                'client-slinky-fullDescription': 'Slinky consists of various modules, each offering a unique feature or advantage. Each module has its own page on this website, explaining its purpose and configuration. The modules are categorized in the same way as the in-game menu.',
+                'client-augustus-fullDescription': 'Augustus Client là một standalone blatant PvP client cho Minecraft, chạy file riêng và tích hợp sẵn các module combat mạnh, hướng HVH và không giấu cheat.',
+                'client-rise-fullDescription': 'Rise Client là một trong những hack client mạnh mẽ nhất, nổi tiếng với các tính năng PvP và bypass anticheat hiệu quả. Tùy chỉnh phiên bản để phù hợp với nhu cầu của bạn.'
+            },
+            'en': {
+                heroTitle: 'CrackHub: Minecraft Client',
+                heroDescription: 'Discover the ultimate collection of Minecraft hack clients, empowering you to dominate every game and experience unlimited gameplay.',
+                exploreButton: 'Start Exploring',
+                libraryTitle: 'Client Library',
+                noResults: 'No clients found matching your criteria.',
+                detailButton: 'Details',
+                modalVersionLabel: 'Version:',
+                modalDownloadsLabel: 'Downloads:',
+                modalTypeLabel: 'Type:',
+                modalFilePasswordLabel: 'Extraction password:',
+                modalFilePasswordNone: 'None',
+                modalDownloadButton: 'Download Now',
+                modalSelectVersion: 'Select version:',
+                tabDetails: 'Details',
+                tabVersions: 'Versions',
+                versionsSidebarTitle: 'Select Rise Client Version',
+                versionsTabPlaceholder: 'Select version from the right sidebar.',
+                footerText1: '&copy; 2025 CrackHub. All rights reserved.',
+                footerText2: 'Power in every click.'
+            }
+        };
+
+        let currentLanguage = localStorage.getItem('language') || 'vi'; // Default to Vietnamese
+
+        function updateContentForLanguage(lang) {
+            const t = translations[lang];
+
+            // Update static texts
+            document.querySelector('[data-key="heroTitle"]').textContent = t.heroTitle;
+            document.querySelector('[data-key="heroDescription"]').textContent = t.heroDescription;
+            document.querySelector('[data-key="exploreButton"]').textContent = t.exploreButton;
+            document.querySelector('[data-key="libraryTitle"]').textContent = t.libraryTitle;
+            document.getElementById('noResults').textContent = t.noResults;
+            
+            // Update modal labels
+            document.querySelector('[data-key="modalVersionLabel"]').textContent = t.modalVersionLabel;
+            document.querySelector('[data-key="modalDownloadsLabel"]').textContent = t.modalDownloadsLabel;
+            document.querySelector('[data-key="modalTypeLabel"]').textContent = t.modalTypeLabel;
+
+            // Update password label (now in main modal)
+            document.querySelector('[data-key="modalFilePasswordLabel"]').textContent = t.modalFilePasswordLabel;
+            
+            document.querySelector('[data-key="modalDownloadButton"]').textContent = t.modalDownloadButton;
+            document.querySelector('[data-key="modalSelectVersion"]').textContent = t.modalSelectVersion;
+            document.querySelector('[data-key="tabDetails"]').textContent = t.tabDetails; // Update tab button text
+            document.querySelector('[data-key="tabVersions"]').textContent = t.tabVersions; // Update tab button text
+            document.querySelector('[data-key="versionsSidebarTitle"]').textContent = t.versionsSidebarTitle; // Update sidebar title
+            // Removed: document.querySelector('[data-key="versionsTabPlaceholder"]').textContent = t.versionsTabPlaceholder; // This element doesn't exist
+
+            document.querySelector('[data-key="footerText1"]').innerHTML = t.footerText1;
+            document.querySelector('[data-key="footerText2"]').textContent = t.footerText2;
+
+            // Update active language button
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.getElementById(`lang-${lang}`).classList.add('active');
+
+            localStorage.setItem('language', lang);
+            currentLanguage = lang;
+
+            // Re-render clients to update "Chi tiết" button and potentially version strings
+            renderClients(clientsData);
+        }
+
         // --- Render Clients ---
         function renderClients(clientsToRender) {
             clientGrid.innerHTML = '';
             if (clientsToRender.length === 0) {
                 noResultsMessage.classList.remove('hidden');
-                noResultsMessage.textContent = "Không tìm thấy client nào phù hợp với yêu cầu của bạn.";
+                noResultsMessage.textContent = translations[currentLanguage].noResults;
             } else {
                 noResultsMessage.classList.add('hidden');
-                // Sort clients by downloads in descending order
                 clientsToRender.sort((a, b) => b.downloads - a.downloads);
 
                 clientsToRender.forEach(client => {
@@ -926,10 +1302,10 @@
                                     <span><i class="fas fa-gamepad"></i> ${client.version}</span>
                                     <span><i class="fas fa-download"></i> <span class="download-count">${client.downloads}</span></span>
                                 </div>
-                                <p class="client-card-description">${client.shortDescription}</p>
+                                <p class="client-card-description">${client.shortDescription[currentLanguage]}</p>
                             </div>
                             <button class="client-card-download-btn">
-                                <i class="fas fa-arrow-down"></i> Chi tiết
+                                <i class="fas fa-arrow-down"></i> ${translations[currentLanguage].detailButton}
                             </button>
                         </div>
                     `;
@@ -958,49 +1334,84 @@
             if (client) {
                 modalClientImage.src = client.image;
                 modalClientName.textContent = client.name;
-                modalClientDownloads.textContent = client.downloads; // Display actual count
+                modalClientDownloads.textContent = client.downloads;
                 modalClientType.textContent = client.type;
-                modalClientDescription.textContent = client.fullDescription;
+                modalClientDescription.textContent = translations[currentLanguage][`${client.id}-fullDescription`];
                 
-                // Display file password from the new 'filePassword' property
+                // Password display in main modal
                 if (client.filePassword) {
                     filePasswordValue.textContent = client.filePassword;
                     modalFilePassword.classList.remove('hidden');
                 } else {
-                    filePasswordValue.textContent = 'Không có';
-                    modalFilePassword.classList.add('hidden'); // Hide if no password found
+                    filePasswordValue.textContent = translations[currentLanguage].modalFilePasswordNone;
+                    modalFilePassword.classList.add('hidden');
                 }
+
+                // Always hide versions sidebar modal first
+                versionsSidebarModal.classList.remove('active');
 
                 // Handle version display and selector based on client
                 if (clientId === 'client-rise' && client.versionsAvailable) {
-                    modalClientVersion.textContent = `6.6.1 - 6.6.4`; // Hardcode display for Rise's version range in modal
-                    modalVersionSelector.classList.remove('hidden');
-                    riseVersionSelect.innerHTML = ''; // Clear previous options
-                    client.versionsAvailable.forEach(versionData => { // Iterate over objects
-                        const option = document.createElement('option');
-                        option.value = versionData.downloadLink; // Store the download link as value
-                        option.textContent = versionData.version; // Display the version string
-                        riseVersionSelect.appendChild(option);
+                    modalClientVersion.textContent = `6.6.1 - 6.6.4`;
+                    versionsTabButton.classList.remove('hidden'); // Show versions tab button in main modal
+                    
+                    // Populate versions in sidebar with buttons
+                    riseVersionButtons.innerHTML = ''; // Clear previous buttons
+                    client.versionsAvailable.forEach(versionData => {
+                        const versionButton = document.createElement('button');
+                        versionButton.className = 'version-button';
+                        versionButton.textContent = versionData.version;
+                        versionButton.dataset.downloadLink = versionData.downloadLink;
+
+                        versionButton.addEventListener('click', () => {
+                            // Deactivate all other buttons
+                            document.querySelectorAll('.version-button').forEach(btn => {
+                                btn.classList.remove('active');
+                            });
+                            // Activate clicked button
+                            versionButton.classList.add('active');
+                            // Update main download link
+                            modalDownloadLink.href = versionButton.dataset.downloadLink;
+                        });
+                        riseVersionButtons.appendChild(versionButton);
                     });
-                    // Set initial download link to the first version's link
+
+                    // Set initial download link and activate first button
                     if (client.versionsAvailable.length > 0) {
                         modalDownloadLink.href = client.versionsAvailable[0].downloadLink;
+                        riseVersionButtons.querySelector('.version-button').classList.add('active');
+                    } else {
+                        modalDownloadLink.href = "#"; // No download link if no versions
                     }
 
-                    // Add event listener for version selection change
-                    riseVersionSelect.onchange = (event) => {
-                        modalDownloadLink.href = event.target.value; // Update download link based on selected option's value
+                    // When versions tab is clicked, show sidebar and activate versions tab
+                    versionsTabButton.onclick = () => {
+                        activateTab('details'); // Keep details tab active in main modal
+                        versionsSidebarModal.classList.add('active'); // Show sidebar
+                        versionSelectorContainer.classList.add('open'); // Default to open
                     };
 
+                    // Apply mousemove listener for the version selector container in sidebar
+                    versionSelectorContainer.addEventListener("mousemove", e => {
+                        const rect = versionSelectorContainer.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        versionSelectorContainer.style.setProperty('--toggle-x', `${x}px`);
+                        versionSelectorContainer.style.setProperty('--toggle-y', `${y}px`);
+                    });
+
                 } else {
-                    modalClientVersion.textContent = client.version; // Show static version for other clients
-                    modalVersionSelector.classList.add('hidden');
-                    modalDownloadLink.href = client.downloadLink; // Set direct download link for other clients
+                    modalClientVersion.textContent = client.version;
+                    versionsTabButton.classList.add('hidden'); // Hide versions tab button for non-Rise clients
+                    versionsSidebarModal.classList.remove('active'); // Ensure sidebar is hidden
+                    modalDownloadLink.href = client.downloadLink;
                 }
 
-                // Store client ID on the download button itself (actualDownloadLink is now dynamic)
+                // Store client ID on the download button itself
                 modalDownloadLink.dataset.clientId = client.id;
 
+                // Always activate details tab by default when showing any client modal
+                activateTab('details');
                 clientDetailModal.classList.add('active');
             }
         }
@@ -1008,9 +1419,34 @@
         // --- Close Client Details Modal ---
         function closeClientDetails() {
             clientDetailModal.classList.remove('active');
-            modalFilePassword.classList.add('hidden'); // Hide password when closing modal
-            modalVersionSelector.classList.add('hidden'); // Hide version selector when closing modal
-            riseVersionSelect.onchange = null; // Remove event listener to prevent issues
+            versionsSidebarModal.classList.remove('active'); // Hide versions sidebar too
+            versionsTabButton.classList.add('hidden'); // Hide versions tab button in main modal
+            versionSelectorContainer.classList.remove('open'); // Ensure it's closed
+            activateTab('details'); // Reset to details tab when closing
+        }
+
+        // --- Close Versions Sidebar Modal ---
+        function closeVersionsSidebar() {
+            versionsSidebarModal.classList.remove('active');
+            versionSelectorContainer.classList.remove('open'); // Ensure it's closed
+        }
+
+        // --- Toggle Rise Version Selector (within sidebar) ---
+        function toggleRiseVersionSelector() {
+            versionSelectorContainer.classList.toggle('open');
+        }
+
+        // --- Tab Switching Logic ---
+        function activateTab(tabId) {
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+
+            document.getElementById(`tab-${tabId}`).classList.add('active');
+            document.querySelector(`.tab-button[data-tab="${tabId}"]`).classList.add('active');
         }
 
         // --- Lazy Load Images ---
@@ -1077,25 +1513,29 @@
         document.addEventListener('DOMContentLoaded', async () => {
             // Initialize Firebase directly on DOMContentLoaded
             initFirebase(); 
+            updateContentForLanguage(currentLanguage); // Set initial content language
 
             closeModalBtn.addEventListener('click', closeClientDetails);
+            // Close main modal if clicking on the overlay itself
             clientDetailModal.addEventListener('click', (e) => {
                 if (e.target === clientDetailModal) {
                     closeClientDetails();
                 }
             });
 
-            // Add mousemove listener for modal glow effect
-            const modalContent = document.getElementById('clientDetailModal').querySelector('.modal-content');
-            modalContent.addEventListener("mousemove", e => {
-                const rect = modalContent.getBoundingClientRect();
+            // Close versions sidebar modal
+            closeVersionsSidebarBtn.addEventListener('click', closeVersionsSidebar);
+            // Close versions sidebar modal if clicking on its overlay (if it had one, but it's fixed now)
+            // For fixed sidebar, clicking outside implies clicking on clientDetailModal overlay, which closes both.
+            versionsSidebarModal.addEventListener("mousemove", e => {
+                const rect = versionsSidebarModal.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                modalContent.style.setProperty('--modal-x', `${x}px`);
-                modalContent.style.setProperty('--modal-y', `${y}px`);
+                versionsSidebarModal.style.setProperty('--sidebar-x', `${x}px`);
+                versionsSidebarModal.style.setProperty('--sidebar-y', `${y}px`);
             });
 
-            // Event listener for download button in modal (Direct download)
+            // Event listener for download button in main modal
             modalDownloadLink.addEventListener('click', async (e) => {
                 e.preventDefault(); // Prevent default link behavior
                 const clientId = modalDownloadLink.dataset.clientId;
@@ -1103,6 +1543,31 @@
                 await incrementClientDownloadCount(clientId); // Increment count in Firestore
                 triggerConfetti(); // Trigger confetti
                 window.open(modalDownloadLink.href, '_blank'); // Open link in new tab
+            });
+
+            // Event listeners for language buttons
+            document.getElementById('lang-vi').addEventListener('click', () => updateContentForLanguage('vi'));
+            document.getElementById('lang-en').addEventListener('click', () => updateContentForLanguage('en'));
+
+            // Add event listener for the toggle button (within the versions sidebar)
+            toggleVersionSelector.addEventListener('click', toggleRiseVersionSelector);
+
+            // Add event listeners for tab buttons in the main modal
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.dataset.tab;
+                    if (tabId === 'versions') {
+                        // For versions tab, show the sidebar and activate it
+                        versionsSidebarModal.classList.add('active');
+                        versionSelectorContainer.classList.add('open'); // Default to open
+                        // Ensure main modal's details tab is still active if sidebar is open
+                        activateTab('details'); 
+                    } else {
+                        // For other tabs (like details), hide sidebar and activate the tab
+                        versionsSidebarModal.classList.remove('active');
+                        activateTab(tabId);
+                    }
+                });
             });
 
             // Parallax on scroll
