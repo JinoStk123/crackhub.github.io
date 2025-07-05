@@ -264,7 +264,7 @@
 
         .client-card-info span i {
             margin-right: 0.5rem;
-            color: #00C2FF; /* Màu xanh biển chính */
+            color: #00C2FF;
         }
 
         .client-card-description {
@@ -577,16 +577,17 @@
             color: white;
         }
 
-        /* Version Selector Toggle Section (within sidebar) */
+        /* Version Selector Container (now always open) */
         .version-selector-container {
             background-color: #1a1a1a;
-            border: 1px solid #2a2a2a;
+            border: 1px solid #00C2FF; /* Always glowing border */
             border-radius: 0.75rem;
             padding: 1rem;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 194, 255, 0.3); /* Always glowing shadow */
             position: relative;
             overflow: hidden; /* For glow effect */
             transition: all 0.3s ease;
+            /* No toggle, so always "open" styling */
         }
 
         .version-selector-container::before {
@@ -600,66 +601,24 @@
             background: radial-gradient(circle, rgba(0, 194, 255, 0.15), transparent 70%);
             pointer-events: none;
             transition: opacity 0.3s ease, top 0.05s ease-out, left 0.05s ease-out;
-            opacity: 0; /* Hidden by default */
+            opacity: 1; /* Always visible glow */
             z-index: 0;
         }
-
-        .version-selector-container:hover::before {
-            opacity: 1; /* Show glow on hover */
-        }
         
-        .version-selector-container.open {
-            border-color: #00C2FF; /* Border glow when open */
-            box-shadow: 0 4px 20px rgba(0, 194, 255, 0.3); /* Shadow glow when open */
-        }
-        .version-selector-container.open::before {
-             opacity: 1; /* Always show glow when open */
-        }
+        /* Removed .version-selector-container.open styles as it's always open */
 
-        .toggle-button {
-            background-color: #2a2a2a;
-            border: 1px solid #3a3a3a;
-            color: #e0e0e0;
-            cursor: pointer;
-            outline: none;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            width: 100%; /* Full width for the button */
-            text-align: left; /* Align text to left */
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
+        /* Removed .toggle-button and .toggle-icon styles as button is removed */
 
-        .toggle-button:hover {
-            background-color: #3a3a3a;
-            border-color: #00C2FF;
-        }
-
-        .toggle-icon {
-            transform: rotate(0deg);
-            transition: transform 0.2s ease;
-        }
-
-        .version-selector-container.open .toggle-icon {
-            transform: rotate(180deg);
-        }
-
+        /* Version Selector Content (now always visible) */
         .version-selector-content {
-            max-height: 0;
-            opacity: 0;
-            visibility: hidden;
-            transition: max-height 0.3s ease-out, opacity 0.3s ease-out, visibility 0.3s ease-out;
+            max-height: none; /* Always visible */
+            opacity: 1; /* Always visible */
+            visibility: visible; /* Always visible */
+            padding-top: 1rem; /* Keep padding */
+            transition: none; /* No transition needed as it's always open */
         }
 
-        .version-selector-container.open .version-selector-content {
-            max-height: 200px; /* Adjust based on expected content height */
-            opacity: 1;
-            visibility: visible;
-            padding-top: 1rem; /* Add padding when open */
-        }
-
-        /* NEW: Styles for version buttons (replacing select options) */
+        /* Styles for version buttons */
         .version-buttons-container {
             display: flex;
             flex-wrap: wrap;
@@ -890,7 +849,7 @@
             <!-- Tab Navigation for Main Modal -->
             <div class="tab-navigation">
                 <button class="tab-button" data-tab="details" data-key="tabDetails">Chi tiết</button>
-                <!-- Versions tab button is now only a trigger for the sidebar, not a content tab -->
+                <!-- Versions tab button is now only a trigger for the versions modal -->
                 <button class="tab-button hidden" data-tab="versions" data-key="tabVersions" id="versionsTabButton">Phiên bản</button>
             </div>
 
@@ -913,18 +872,15 @@
         <div id="versionsSidebarModal" class="versions-sidebar-modal">
             <button class="modal-close-btn" id="closeVersionsSidebarBtn">&times;</button>
             <h3 class="text-xl font-bold text-white mb-4" data-key="versionsSidebarTitle">Chọn phiên bản Rise Client</h3>
-            <!-- Version Selector Toggle Section -->
+            <!-- Version Selector Container (always open now) -->
             <div id="versionSelectorContainer" class="version-selector-container mb-4">
-                <button id="toggleVersionSelector" class="toggle-button">
-                    <span data-key="modalSelectVersion">Chọn phiên bản:</span>
-                    <i class="fas fa-chevron-down toggle-icon"></i>
-                </button>
                 <div id="versionSelectorContent" class="version-selector-content">
                     <div id="riseVersionButtons" class="version-buttons-container">
                         <!-- Version buttons will be populated by JavaScript -->
                     </div>
                 </div>
             </div>
+            <!-- File password display (removed from here, now in main modal) -->
         </div>
     </div>
 
@@ -1094,7 +1050,7 @@
         const versionsSidebarModal = document.getElementById('versionsSidebarModal');
         const closeVersionsSidebarBtn = document.getElementById('closeVersionsSidebarBtn'); // Close button for sidebar modal
         const versionSelectorContainer = document.getElementById('versionSelectorContainer'); // Container for toggle
-        const toggleVersionSelector = document.getElementById('toggleVersionSelector'); // Toggle button
+        // const toggleVersionSelector = document.getElementById('toggleVersionSelector'); // Removed: Toggle button
         const versionSelectorContent = document.getElementById('versionSelectorContent'); // Content to be toggled
         const riseVersionButtons = document.getElementById('riseVersionButtons'); // Changed from select to div for buttons
 
@@ -1384,14 +1340,13 @@
                         modalDownloadLink.href = "#"; // No download link if no versions
                     }
 
-                    // When versions tab is clicked, show sidebar and activate versions tab
+                    // When versions tab is clicked, show versions modal (now detached)
                     versionsTabButton.onclick = () => {
-                        activateTab('details'); // Keep details tab active in main modal
-                        versionsSidebarModal.classList.add('active'); // Show sidebar
-                        versionSelectorContainer.classList.add('open'); // Default to open
+                        versionsSidebarModal.classList.add('active'); // Show detached versions modal
+                        // No need for versionSelectorContainer.classList.add('open') as it's always open
                     };
 
-                    // Apply mousemove listener for the version selector container in sidebar
+                    // Apply mousemove listener for the version selector container in versions modal
                     versionSelectorContainer.addEventListener("mousemove", e => {
                         const rect = versionSelectorContainer.getBoundingClientRect();
                         const x = e.clientX - rect.left;
@@ -1403,7 +1358,7 @@
                 } else {
                     modalClientVersion.textContent = client.version;
                     versionsTabButton.classList.add('hidden'); // Hide versions tab button for non-Rise clients
-                    versionsSidebarModal.classList.remove('active'); // Ensure sidebar is hidden
+                    versionsSidebarModal.classList.remove('active'); // Ensure detached versions modal is hidden
                     modalDownloadLink.href = client.downloadLink;
                 }
 
@@ -1419,22 +1374,22 @@
         // --- Close Client Details Modal ---
         function closeClientDetails() {
             clientDetailModal.classList.remove('active');
-            versionsSidebarModal.classList.remove('active'); // Hide versions sidebar too
+            versionsSidebarModal.classList.remove('active'); // Hide detached versions modal too
             versionsTabButton.classList.add('hidden'); // Hide versions tab button in main modal
-            versionSelectorContainer.classList.remove('open'); // Ensure it's closed
+            // Removed: versionSelectorContainer.classList.remove('open'); // No toggle button to close
             activateTab('details'); // Reset to details tab when closing
         }
 
         // --- Close Versions Sidebar Modal ---
         function closeVersionsSidebar() {
             versionsSidebarModal.classList.remove('active');
-            versionSelectorContainer.classList.remove('open'); // Ensure it's closed
+            // Removed: versionSelectorContainer.classList.remove('open'); // No toggle button to close
         }
 
-        // --- Toggle Rise Version Selector (within sidebar) ---
-        function toggleRiseVersionSelector() {
-            versionSelectorContainer.classList.toggle('open');
-        }
+        // Removed: --- Toggle Rise Version Selector (within sidebar) ---
+        // function toggleRiseVersionSelector() {
+        //     versionSelectorContainer.classList.toggle('open');
+        // }
 
         // --- Tab Switching Logic ---
         function activateTab(tabId) {
@@ -1549,21 +1504,21 @@
             document.getElementById('lang-vi').addEventListener('click', () => updateContentForLanguage('vi'));
             document.getElementById('lang-en').addEventListener('click', () => updateContentForLanguage('en'));
 
-            // Add event listener for the toggle button (within the versions sidebar)
-            toggleVersionSelector.addEventListener('click', toggleRiseVersionSelector);
+            // Removed: Add event listener for the toggle button (within the versions sidebar)
+            // toggleVersionSelector.addEventListener('click', toggleRiseVersionSelector);
 
             // Add event listeners for tab buttons in the main modal
             tabButtons.forEach(button => {
                 button.addEventListener('click', () => {
                     const tabId = button.dataset.tab;
                     if (tabId === 'versions') {
-                        // For versions tab, show the sidebar and activate it
+                        // For versions tab, show the versions modal (now detached)
                         versionsSidebarModal.classList.add('active');
-                        versionSelectorContainer.classList.add('open'); // Default to open
-                        // Ensure main modal's details tab is still active if sidebar is open
+                        // No need for versionSelectorContainer.classList.add('open') as it's always open
+                        // Ensure main modal's details tab is still active if versions modal is open
                         activateTab('details'); 
                     } else {
-                        // For other tabs (like details), hide sidebar and activate the tab
+                        // For other tabs (like details), hide versions modal and activate the tab
                         versionsSidebarModal.classList.remove('active');
                         activateTab(tabId);
                     }
