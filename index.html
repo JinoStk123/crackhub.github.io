@@ -4,10 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CrackHub – Minecraft Client Hub</title>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;700&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
+    /* Global styles and scrollbar */
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Inter', sans-serif; /* Sử dụng Inter làm font chính */
       background-color: #0f0f0f;
       color: #fff;
       overflow-x: hidden;
@@ -23,44 +25,99 @@
     ::-webkit-scrollbar-track {
       background-color: #0f0f0f;
     }
+
+    /* Header styling with enhanced text animation */
     header {
       text-align: center;
-      padding: 50px 20px 20px;
-      background: linear-gradient(90deg, #3b82f6, #06b6d4);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      padding: 80px 20px 40px; /* Tăng padding để header có không gian hơn */
+      background: linear-gradient(135deg, #1a2a3a 0%, #0f0f0f 70%); /* Background gradient tối hơn, hiện đại hơn */
+      position: relative;
+      overflow: hidden;
+      border-bottom: 2px solid rgba(59, 130, 246, 0.2); /* Thêm đường viền dưới mờ */
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* Đổ bóng nhẹ */
     }
     header h1 {
-      font-size: 3rem;
-      font-weight: 800;
+      font-family: 'Rajdhani', sans-serif; /* Font Rajdhani cho tiêu đề chính */
+      font-size: 4.5rem; /* Tăng kích thước font */
+      font-weight: 700; /* Đậm hơn */
       margin: 0;
+      background: linear-gradient(90deg, #3b82f6, #06b6d4, #8b5cf6); /* Gradient 3 màu cho chữ */
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textGlow 2s infinite alternate, pulseScale 4s infinite ease-in-out; /* Thêm hiệu ứng pulseScale */
+      letter-spacing: 2px; /* Tăng khoảng cách chữ */
     }
     header p {
-      color: #ccc;
-      margin-top: 10px;
+      color: #b0b0b0; /* Màu chữ sáng hơn một chút */
+      margin-top: 15px; /* Tăng khoảng cách */
+      font-size: 1.1rem; /* Tăng kích thước font */
     }
     .counter {
-      color: #fff;
-      font-size: 1rem;
-      margin-top: 10px;
+      color: #e0e0e0; /* Màu chữ sáng hơn */
+      font-size: 1.2rem; /* Tăng kích thước font */
+      margin-top: 20px;
+      font-weight: 600;
     }
+
+    /* Keyframes for text glow - Đã điều chỉnh để không bị mất chữ */
+    @keyframes textGlow {
+      from { text-shadow: 0 0 5px rgba(6, 182, 212, 0.5), 0 0 10px rgba(59, 130, 246, 0.3); } /* Giảm độ lan tỏa ban đầu */
+      to { text-shadow: 0 0 15px rgba(59, 130, 246, 0.8), 0 0 20px rgba(6, 182, 212, 0.6), 0 0 25px rgba(139, 92, 246, 0.5); } /* Giảm độ lan tỏa tối đa */
+    }
+
+    /* New Keyframes for subtle pulse scale */
+    @keyframes pulseScale {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.01); }
+        100% { transform: scale(1); }
+    }
+
+    /* Search box styling */
     .search-box {
       display: flex;
       justify-content: center;
-      margin: 20px 0 40px;
+      margin: 20px auto 40px;
+      max-width: 500px;
+      position: relative;
     }
     .search-box input {
-      padding: 10px 12px;
-      border-radius: 6px;
+      padding: 12px 15px;
+      padding-left: 45px;
+      border-radius: 8px;
       border: 1px solid #333;
-      width: 300px;
+      width: 100%;
       background-color: #1c1c1c;
       color: #fff;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
+    .search-box input:focus {
+      outline: none;
+      border-color: #06b6d4;
+      box-shadow: 0 0 0 4px rgba(6, 182, 212, 0.4);
+    }
+    .search-box .search-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #888;
+      font-size: 1.2rem;
+      pointer-events: none;
+    }
+
+    /* Section animations */
     section {
       max-width: 1100px;
       margin: auto;
       padding: 0 20px 40px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    }
+    section.animate-in {
+      opacity: 1;
+      transform: translateY(0);
     }
     h2 {
       font-size: 1.8rem;
@@ -68,6 +125,8 @@
       border-left: 4px solid #06b6d4;
       padding-left: 10px;
     }
+
+    /* Client grid and card styling with enhanced hover effects */
     .client-grid {
       display: flex;
       overflow-x: auto;
@@ -82,11 +141,14 @@
       border: 1px solid #2e2e2e;
       border-radius: 8px;
       padding: 20px;
-      transition: 0.2s;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* More complex easing for hover */
+      position: relative;
     }
     .card:hover {
-      border-color: #06b6d4;
-      transform: translateY(-3px);
+      border-color: #06b6d4; /* Giữ nguyên viền đổi màu */
+      transform: translateY(-8px); /* Hiệu ứng nhấc lên */
+      box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 8px 15px rgba(0, 0, 0, 0.3); /* Hiệu ứng glow và đổ bóng nhẹ */
+      /* Đã loại bỏ background-color: #252525; */
     }
     .card h3 {
       margin-top: 0;
@@ -111,6 +173,8 @@
       color: #aaa;
       margin-top: 5px;
     }
+
+    /* Footer styling */
     footer {
       text-align: center;
       padding: 20px;
@@ -129,10 +193,11 @@
   </header>
 
   <div class="search-box">
-    <input type="text" placeholder="Search clients...">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Tìm kiếm client...">
   </div>
 
-  <section>
+  <section id="trending-section">
     <h2>🔥 Trending Clients</h2>
     <div class="client-grid" id="trendingClients">
       <div class="card">
@@ -150,22 +215,32 @@
         <p>Universal client with modules.</p>
         <a href="https://aristois.net/">View Details →</a>
       </div>
+      <div class="card">
+        <h3>Impact Client</h3>
+        <p>Popular utility client for anarchy servers.</p>
+        <a href="https://impactclient.net/">View Details →</a>
+      </div>
+      <div class="card">
+        <h3>Wurst Client</h3>
+        <p>Another well-known hacked client with many features.</p>
+        <a href="https://www.wurstclient.net/">View Details →</a>
+      </div>
     </div>
   </section>
 
- <section>
+ <section id="free-clients-section">
     <h2>🆓 Free Unlocked Clients</h2>
     <div class="client-grid" id="freeClients">
       <div class="card">
         <h3>Rise Client (Free Unlock)</h3>
-        <p>Credits: nespola001</p>
+        <p>Credits: mrnv & o</p>
         <a href="https://mega.nz/file/X4oQGQSQ#tnIj9lo-fmjU47px7EMpCpg_2I4YT-Vi7zdRUBV1t4s">Download →</a>
         <div class="pass-info">Pass: CrackHub</div>
       </div>
       <div class="card">
         <h3>Vape v4.18</h3>
         <p>Credits: John Xina</p>
-        <a href="https://mega.nz/file/G55TQIDI#OED5rRoWt2k76uhtOBXM8gW4LsK3bTe1MZ1-nn2LR-Y">Download →</a>
+        <a href="https://mega.nz/file/qkgkmRKT#IMxkBe7E3hIfAtcMGMzCWSUhH9R_C2qwex9Tt9iCNp0">Download →</a>
         <div class="pass-info">Pass: CrackHub</div>
       </div>
       <div class="card">
@@ -176,7 +251,7 @@
       </div>
       <div class="card">
         <h3>Slinky Client</h3>
-        <p>Credits: mrnv & o</p>
+        <p>Credits:</p>
         <a href="https://mega.nz/file/ag4WBJrK#SPp0TGkSXPxN1xPIZGjgZo-zMbHIMdrE8B0A0RYkIRI">Download →</a>
         <div class="pass-info">Pass: CrackHub</div>
       </div>
@@ -188,12 +263,62 @@
   </footer>
 
   <script>
+    // Function to update client count
     function updateClientCount() {
-      const trending = document.querySelectorAll('#trendingClients .card').length;
-      const free = document.querySelectorAll('#freeClients .card').length;
-      document.getElementById('clientCount').textContent = trending + free;
+      const allCards = document.querySelectorAll('.client-grid .card');
+      let visibleCount = 0;
+      allCards.forEach(card => {
+        if (card.style.display !== 'none') {
+          visibleCount++;
+        }
+      });
+      document.getElementById('clientCount').textContent = visibleCount;
     }
-    updateClientCount();
+    updateClientCount(); // Call on load
+
+    // Intersection Observer for fade-in/slide-up animation
+    document.addEventListener('DOMContentLoaded', () => {
+      const sections = document.querySelectorAll('section');
+
+      const observerOptions = {
+        root: null, // relative to the viewport
+        rootMargin: '0px',
+        threshold: 0.1 // 10% of the section must be visible to trigger
+      };
+
+      const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('animate-in');
+            observer.unobserve(entry.target); // Stop observing once animated
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach(section => {
+        observer.observe(section);
+      });
+
+      // Search functionality
+      const searchInput = document.getElementById('searchInput');
+      const allClientCards = document.querySelectorAll('.client-grid .card');
+
+      searchInput.addEventListener('input', (event) => {
+        const searchTerm = event.target.value.toLowerCase();
+
+        allClientCards.forEach(card => {
+          const clientName = card.querySelector('h3').textContent.toLowerCase();
+          const clientDescription = card.querySelector('p').textContent.toLowerCase();
+
+          if (clientName.includes(searchTerm) || clientDescription.includes(searchTerm)) {
+            card.style.display = ''; // Hiển thị card nếu khớp
+          } else {
+            card.style.display = 'none'; // Ẩn card nếu không khớp
+          }
+        });
+        updateClientCount(); // Cập nhật lại số lượng client sau khi lọc
+      });
+    });
   </script>
 </body>
 </html>
