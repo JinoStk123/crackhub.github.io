@@ -35,7 +35,20 @@
       overflow: hidden;
       border-bottom: 2px solid rgba(59, 130, 246, 0.2); /* Thêm đường viền dưới mờ */
       box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5); /* Đổ bóng nhẹ */
+      display: flex; /* Dùng flexbox để căn chỉnh tiêu đề */
+      flex-direction: column; /* Xếp theo cột */
+      align-items: center; /* Căn giữa theo chiều ngang */
+      justify-content: center; /* Căn giữa theo chiều dọc */
     }
+    .header-content {
+        display: flex;
+        align-items: center; /* Căn giữa h1 */
+        justify-content: center;
+        /* Loại bỏ gap vì không còn logo */
+        margin-bottom: 10px; /* Khoảng cách dưới h1 */
+    }
+    /* Loại bỏ .header-logo CSS vì không còn sử dụng */
+
     header h1 {
       font-family: 'Rajdhani', sans-serif; /* Font Rajdhani cho tiêu đề chính */
       font-size: 4.5rem; /* Tăng kích thước font */
@@ -75,10 +88,15 @@
     /* Search box styling */
     .search-box {
       display: flex;
-      justify-content: center;
+      flex-direction: column; /* Để autocomplete nằm dưới input */
+      align-items: center; /* Căn giữa */
       margin: 20px auto 40px;
       max-width: 500px;
-      position: relative;
+      position: relative; /* Quan trọng cho positioning của autocomplete */
+    }
+    .search-input-wrapper {
+        position: relative;
+        width: 100%;
     }
     .search-box input {
       padding: 12px 15px;
@@ -104,6 +122,40 @@
       color: #888;
       font-size: 1.2rem;
       pointer-events: none;
+    }
+
+    /* Autocomplete Suggestions Styling */
+    .autocomplete-suggestions {
+      position: absolute;
+      top: 100%; /* Đặt ngay dưới input */
+      left: 0;
+      right: 0;
+      background-color: #1c1c1c;
+      border: 1px solid #333;
+      border-top: none;
+      border-radius: 0 0 8px 8px; /* Bo tròn góc dưới */
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 100; /* Đảm bảo hiển thị trên các nội dung khác */
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+      display: none; /* Mặc định ẩn */
+    }
+    .autocomplete-suggestion-item {
+      padding: 10px 15px;
+      cursor: pointer;
+      color: #ccc;
+      transition: background-color 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px; /* Khoảng cách giữa icon và text */
+    }
+    .autocomplete-suggestion-item .suggestion-icon {
+        color: #888;
+        font-size: 1rem;
+    }
+    .autocomplete-suggestion-item:hover, .autocomplete-suggestion-item.selected {
+      background-color: #2a2a2a;
+      color: #fff;
     }
 
     /* Section animations */
@@ -143,20 +195,34 @@
       padding: 20px;
       transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* More complex easing for hover */
       position: relative;
+      display: flex; /* Dùng flexbox để sắp xếp nội dung trong card */
+      flex-direction: column; /* Xếp logo, tiêu đề, mô tả theo cột */
+      align-items: center; /* Căn giữa nội dung trong card */
     }
     .card:hover {
       border-color: #06b6d4; /* Giữ nguyên viền đổi màu */
       transform: translateY(-8px); /* Hiệu ứng nhấc lên */
       box-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 8px 15px rgba(0, 0, 0, 0.3); /* Hiệu ứng glow và đổ bóng nhẹ */
-      /* Đã loại bỏ background-color: #252525; */
+    }
+    .client-card-logo {
+        width: 60px; /* Kích thước logo client */
+        height: 60px;
+        border-radius: 50%; /* Bo tròn logo */
+        margin-bottom: 15px; /* Khoảng cách dưới logo */
+        object-fit: cover; /* Đảm bảo ảnh vừa vặn */
+        border: 2px solid rgba(6, 182, 212, 0.5); /* Viền nhẹ cho logo */
+        box-shadow: 0 0 10px rgba(6, 182, 212, 0.3); /* Glow nhẹ cho logo */
     }
     .card h3 {
       margin-top: 0;
       font-size: 1.4rem;
+      text-align: center; /* Căn giữa tiêu đề client */
     }
     .card p {
       font-size: 0.95rem;
       color: #bbb;
+      text-align: center; /* Căn giữa mô tả client */
+      flex-grow: 1; /* Cho phép đoạn văn bản chiếm hết không gian còn lại */
     }
     .card a {
       display: inline-block;
@@ -186,41 +252,54 @@
 </head>
 <body>
   <header>
-    <h1>CrackHub</h1>
+    <div class="header-content">
+        <!-- Đã loại bỏ thẻ <img> cho logo CrackHub -->
+        <h1>CrackHub</h1>
+    </div>
     <p>The ultimate hub for Minecraft clients – research & anti-cheat testing.</p>
     <p><strong>CrackHub - Comback</strong></p>
     <div class="counter">Total Clients: <span id="clientCount">0</span></div>
   </header>
 
   <div class="search-box">
-    <span class="search-icon">🔍</span>
-    <input type="text" id="searchInput" placeholder="Tìm kiếm client...">
+    <div class="search-input-wrapper">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Tìm kiếm client...">
+        <div id="autocompleteSuggestions" class="autocomplete-suggestions">
+            <!-- Suggestions will be inserted here by JavaScript -->
+        </div>
+    </div>
   </div>
 
   <section id="trending-section">
     <h2>🔥 Trending Clients</h2>
     <div class="client-grid" id="trendingClients">
       <div class="card">
+        <img src="https://placehold.co/60x60/3b82f6/FFFFFF?text=LB" alt="LiquidBounce Logo" class="client-card-logo">
         <h3>LiquidBounce NextGen</h3>
         <p>Forge 1.8.9, open-source hack client.</p>
         <a href="https://liquidbounce.net/">View Details →</a>
       </div>
       <div class="card">
+        <img src="https://placehold.co/60x60/06b6d4/FFFFFF?text=MC" alt="Meteor Client Logo" class="client-card-logo">
         <h3>Meteor Client</h3>
         <p>Fabric 1.20+, feature-rich hack client.</p>
         <a href="https://meteorclient.com/">View Details →</a>
       </div>
       <div class="card">
+        <img src="https://placehold.co/60x60/8b5cf6/FFFFFF?text=AC" alt="Aristois Logo" class="client-card-logo">
         <h3>Aristois</h3>
         <p>Universal client with modules.</p>
         <a href="https://aristois.net/">View Details →</a>
       </div>
       <div class="card">
+        <img src="https://placehold.co/60x60/ec4899/FFFFFF?text=IC" alt="Impact Client Logo" class="client-card-logo">
         <h3>Impact Client</h3>
         <p>Popular utility client for anarchy servers.</p>
         <a href="https://impactclient.net/">View Details →</a>
       </div>
       <div class="card">
+        <img src="https://placehold.co/60x60/f59e0b/FFFFFF?text=WC" alt="Wurst Client Logo" class="client-card-logo">
         <h3>Wurst Client</h3>
         <p>Another well-known hacked client with many features.</p>
         <a href="https://www.wurstclient.net/">View Details →</a>
@@ -232,24 +311,28 @@
     <h2>🆓 Free Unlocked Clients</h2>
     <div class="client-grid" id="freeClients">
       <div class="card">
+        <img src="https://placehold.co/60x60/3b82f6/FFFFFF?text=RC" alt="Rise Client Logo" class="client-card-logo">
         <h3>Rise Client (Free Unlock)</h3>
         <p>Credits: mrnv & o</p>
         <a href="https://mega.nz/file/X4oQGQSQ#tnIj9lo-fmjU47px7EMpCpg_2I4YT-Vi7zdRUBV1t4s">Download →</a>
         <div class="pass-info">Pass: CrackHub</div>
       </div>
       <div class="card">
+        <img src="https://placehold.co/60x60/06b6d4/FFFFFF?text=V4" alt="Vape v4.18 Logo" class="client-card-logo">
         <h3>Vape v4.18</h3>
         <p>Credits: John Xina</p>
         <a href="https://mega.nz/file/qkgkmRKT#IMxkBe7E3hIfAtcMGMzCWSUhH9R_C2qwex9Tt9iCNp0">Download →</a>
         <div class="pass-info">Pass: CrackHub</div>
       </div>
       <div class="card">
+        <img src="https://placehold.co/60x60/8b5cf6/FFFFFF?text=AGC" alt="Augustus Client Logo" class="client-card-logo">
         <h3>Augustus Client</h3>
         <p>Credits: nespola001</p>
         <a href="https://mega.nz/file/SkoniTYS#Hi-OsX3QJlwctKWt_yJt3aflMF6S3QkgMLoyWyJW9mc">Download →</a>
         <div class="pass-info">Pass: CrackHub</div>
       </div>
       <div class="card">
+        <img src="https://placehold.co/60x60/ec4899/FFFFFF?text=SC" alt="Slinky Client Logo" class="client-card-logo">
         <h3>Slinky Client</h3>
         <p>Credits:</p>
         <a href="https://mega.nz/file/ag4WBJrK#SPp0TGkSXPxN1xPIZGjgZo-zMbHIMdrE8B0A0RYkIRI">Download →</a>
@@ -299,24 +382,129 @@
         observer.observe(section);
       });
 
-      // Search functionality
+      // Autocomplete and Search functionality
       const searchInput = document.getElementById('searchInput');
+      const autocompleteSuggestions = document.getElementById('autocompleteSuggestions');
       const allClientCards = document.querySelectorAll('.client-grid .card');
 
-      searchInput.addEventListener('input', (event) => {
-        const searchTerm = event.target.value.toLowerCase();
+      // Extract all client names for suggestions
+      const clientNames = Array.from(allClientCards).map(card =>
+        card.querySelector('h3').textContent.trim()
+      );
 
+      let currentFocus = -1; // For keyboard navigation
+
+      // Function to show suggestions
+      function showSuggestions(inputValue) {
+        const searchTerm = inputValue.toLowerCase();
+        autocompleteSuggestions.innerHTML = ''; // Clear previous suggestions
+        currentFocus = -1; // Reset focus
+
+        if (!searchTerm) {
+          autocompleteSuggestions.style.display = 'none';
+          return;
+        }
+
+        const filteredSuggestions = clientNames.filter(name =>
+          name.toLowerCase().includes(searchTerm)
+        );
+
+        if (filteredSuggestions.length === 0) {
+            autocompleteSuggestions.style.display = 'none';
+            return;
+        }
+
+        filteredSuggestions.forEach((suggestion, index) => {
+          const item = document.createElement('div');
+          item.classList.add('autocomplete-suggestion-item');
+          item.innerHTML = `<span class="suggestion-icon">🔍</span> ${highlightMatch(suggestion, searchTerm)}`;
+          item.addEventListener('click', () => {
+            searchInput.value = suggestion;
+            autocompleteSuggestions.style.display = 'none';
+            filterClients(suggestion); // Trigger search when a suggestion is clicked
+          });
+          autocompleteSuggestions.appendChild(item);
+        });
+        autocompleteSuggestions.style.display = 'block';
+      }
+
+      // Function to highlight matching parts in suggestion
+      function highlightMatch(text, match) {
+        const parts = text.split(new RegExp(`(${match})`, 'gi'));
+        return parts.map(part => {
+          if (part.toLowerCase() === match.toLowerCase()) {
+            return `<strong style="color: #06b6d4;">${part}</strong>`; // Highlight in blue
+          }
+          return part;
+        }).join('');
+      }
+
+      // Function to filter clients based on search term
+      function filterClients(searchTerm) {
+        const lowerCaseSearchTerm = searchTerm.toLowerCase();
         allClientCards.forEach(card => {
           const clientName = card.querySelector('h3').textContent.toLowerCase();
           const clientDescription = card.querySelector('p').textContent.toLowerCase();
 
-          if (clientName.includes(searchTerm) || clientDescription.includes(searchTerm)) {
-            card.style.display = ''; // Hiển thị card nếu khớp
+          if (clientName.includes(lowerCaseSearchTerm) || clientDescription.includes(lowerCaseSearchTerm)) {
+            card.style.display = ''; // Show card
           } else {
-            card.style.display = 'none'; // Ẩn card nếu không khớp
+            card.style.display = 'none'; // Hide card
           }
         });
-        updateClientCount(); // Cập nhật lại số lượng client sau khi lọc
+        updateClientCount(); // Update client count after filtering
+      }
+
+      // Event listener for search input
+      searchInput.addEventListener('input', (event) => {
+        showSuggestions(event.target.value);
+        filterClients(event.target.value); // Also filter main cards as typing
+      });
+
+      // Keyboard navigation for suggestions
+      searchInput.addEventListener('keydown', (event) => {
+        const items = autocompleteSuggestions.querySelectorAll('.autocomplete-suggestion-item');
+        if (event.key === 'ArrowDown') {
+          currentFocus++;
+          addActive(items);
+        } else if (event.key === 'ArrowUp') {
+          currentFocus--;
+          addActive(items);
+        } else if (event.key === 'Enter') {
+          event.preventDefault(); // Prevent form submission
+          if (currentFocus > -1) {
+            if (items[currentFocus]) {
+              items[currentFocus].click(); // Simulate click on active item
+            }
+          } else {
+            // If no suggestion is selected, just trigger the search for the current input
+            filterClients(searchInput.value);
+            autocompleteSuggestions.style.display = 'none';
+          }
+        }
+      });
+
+      function addActive(items) {
+        if (!items) return false;
+        removeActive(items);
+        if (currentFocus >= items.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = (items.length - 1);
+        items[currentFocus].classList.add('selected');
+        // Scroll into view if necessary
+        items[currentFocus].scrollIntoView({ block: 'nearest' });
+      }
+
+      function removeActive(items) {
+        for (let i = 0; i < items.length; i++) {
+          items[i].classList.remove('selected');
+        }
+      }
+
+      // Hide suggestions when clicking outside
+      document.addEventListener('click', (event) => {
+        if (!event.target.closest('.search-box')) {
+          autocompleteSuggestions.style.display = 'none';
+        }
       });
     });
   </script>
